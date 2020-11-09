@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="pragma" content="no-cache">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>BlockChain Election</title>
+
+        <!-- Bootstrap Core CSS -->
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+
+        <!-- Custom CSS -->
+        <link href="{{ url_for('static', filename='css/default.css') }}" rel="stylesheet" type="text/css">
+        <!-- Morris Charts CSS -->
+
+        <!-- Custom Fonts -->
+
+        <!-- Typeahead css -->
+
+        {% block head %}{% endblock %}
+
+    </head>
+    <body>
+        <div id="wrapper">
+
+            <!-- Navigation -->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark nav-header">
+                <a class="navbar-brand" href="#">Navbar</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+              
+                <div class="collapse navbar-collapse" id="navbarColor02">
+                  <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                      <a class="nav-link" href="#">로그인
+                        <span class="sr-only">(current)</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">회원가입</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Separated link</a>
+                      </div>
+                    </li>
+                  </ul>
+                  <!--
+                  <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="text" placeholder="Search">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                  </form>
+                  -->
+                </div>
+              </nav>
+
+            <div id="page-wrapper">
+                <div class="container-fluid">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+            <!-- /#page-wrapper -->
+
+        </div>
+        <!-- UID Search modal -->
+        <div class="modal fade" id="modal-uid-search" tabindex="-1" role="dialog" aria-labelledby="UidSearchModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">
+                            <i class="fa fa-search"></i>
+                            UID Translate
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="frmUidTranslate" method="POST" action="">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <select class="form-control" id="to" name="to">
+                                        <option value="str_uid">UID to STR_UID</option>
+                                        <option value="uid">STR_UID to UID</option>
+                                        <option value="username_to_user_idx">UserName to User_idx</option>
+                                        <option value="username_to_account_idx">UserName to Account_idx</option>
+                                        <option value="user_idx_to_account_idx">User_idx to Account_idx</option>
+                                        <option value="user_idx_to_username">User_idx to UserName</option>
+                                        <option value="account_idx_to_user_idx">Account_idx to User_idx</option>
+                                        <option value="account_idx_to_to_username">Account_idx to UserName</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <textarea class="form-control" id="text_area_input" name="text_area_input" rows="20"></textarea>
+                                </div>
+                                <div class="col-lg-6">
+                                    <span class="form-control" id='text_area_output' name=​'text_area_output' style="border:1px solid #dadada;overflow-x:hidden;overflow-x:auto;overflow-y:scroll;height:414px;display:inline-block;">
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#wrapper -->
+        </div>
+        {% block modals %}{% endblock %}
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+
+        <!-- Morris Charts JavaScript -->
+
+        <!-- developer's JavaScript -->
+
+        {% block script %}{% endblock %}
+    </body>
+</html>
