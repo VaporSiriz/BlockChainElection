@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from election import app
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from ecdsa import NIST256p, SigningKey
@@ -7,7 +7,7 @@ import base58
 import codecs
 import hashlib
 
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 def get_session():
     return db.session
@@ -41,7 +41,7 @@ class Admin(db.Model):
         self.username = username
         self.password = generate_password_hash(str(password))
 
-class Account(db.Model):
+class Account(db.Model, UserMixin):
     __table_name__ = 'account'
     __table_args__ = (
         {'extend_existing': True,
@@ -54,11 +54,11 @@ class Account(db.Model):
     _private_key = db.Column(db.String(256), nullable=False, doc="블록체인 address를 생성하기 위한 private_key")
     _public_key = db.Column(db.String(256), nullable=False, doc="블록체인 address를 생성하기 위한 public_key")
     _blockchain_address = db.Column(db.String(256), nullable=False, doc="블록 체인을 이용하기 위한 address")
- 
+
     def __init__(self, username, password):
         self.username = username
         self.password = generate_password_hash(str(password))
-        self._private_key = SigningKey.generate(curve=NIST256p).to_string().hex()
+        self._private_key = SigningKey.generate(curve=NIST256p)
         self._public_key = self._private_key.get_verifying_key()
         self._blockchain_address = self.generate_blockchain_address()
 
@@ -101,6 +101,9 @@ class Account(db.Model):
 
         blockchain_address = base58.b58encode(address_hex).decode('utf-8')
         return blockchain_address
+
+    def check_password(self, password):
+        return check_password_hash(self.password, str(password))
 
 class Election(db.Model):
     __table_name__ = 'election'

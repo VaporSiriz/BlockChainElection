@@ -1,0 +1,1 @@
+python manage_election.py runserver -p 5000

@@ -29,6 +29,7 @@ services:
       - DB_NAME=election
       - DB_USER=root
       - DB_PASSWORD=rootpassword
+      - server_build_type=Local
     ports:
       - "5000:5000"
     links:
@@ -39,3 +40,50 @@ services:
       - db
     tty: true
 
+  blockchain1:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./BlockChain:/app
+    ports:
+      - "5001:5000"
+    links:
+      - db
+    sysctls:
+      - net.core.somaxconn=4096
+    depends_on:
+      - db
+    tty: true
+
+  blockchain2:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./BlockChain:/app
+    ports:
+      - "5002:5000"
+    links:
+      - db
+    sysctls:
+      - net.core.somaxconn=4096
+    depends_on:
+      - db
+    tty: true
+
+  blockchain3:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./BlockChain:/app
+    ports:
+      - "5003:5000"
+    links:
+      - db
+    sysctls:
+      - net.core.somaxconn=4096
+    depends_on:
+      - db
+    tty: true
