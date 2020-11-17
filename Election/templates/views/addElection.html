@@ -1,0 +1,32 @@
+{% extends "default.html" %}
+{% block title %}선거생성{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5">
+        <h1>선거 생성</h1>
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <form method="post">
+                <div class="form-group">
+                    {{ form.title.label("선거 이름") }}
+                    {{ form.title(class="form-control", placeholder="선거 이름") }}
+                </div>
+                <div class="form-group">
+                    {{ form.desc.label("선거 내용") }}
+                    {{ form.desc(class="form-control", placeholder="선거 내용") }}
+                </div>
+                <div class="form-group">
+                    {{ form.startdate.label("시작 시간") }}
+                    
+                </div>
+                <button type="submit" class="btn btn-primary">등록</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
