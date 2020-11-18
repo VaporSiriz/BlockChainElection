@@ -5,6 +5,7 @@ from models import Account
 from models import db, db_commit, db_add
 import election
 
+
 def configure_app():
     app = election.init_app()
     return app

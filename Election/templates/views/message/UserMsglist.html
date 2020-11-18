@@ -1,0 +1,46 @@
+{% extends "default.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+#result
+<div style="align-content: center;">
+  <table class="table">
+			<thead>
+			  <tr>
+  				<td colspan="5" align="right"> 총 내역 목록 : <b>{{l}}</b>개
+            <td><form action="message/writeMsg"><input type="submit" value="추가"/></form></td>
+  			</tr>
+			<tr>
+			<th>상태</th>	<th>메시지 제목</th>	<th>메시지 내용</th>	<th>작성 시간</th><th>보낸 시간</th><th>수신자 목록</th><th> " " </th>
+			</tr>
+			</thead>
+			<tbody>
+
+ {% for mlist in result %}
+  {% for ml in mlist %}
+<tr><td>{{ml.state}}</td><td>{{ml.election_id}}</td>
+
+
+
+
+  <td><a href={{url_for('message/detailMsg',variable=ml.msgContent)}}>{{ml.msgTitle}}</a></td>
+
+
+
+  <td>{{ml.msgContent}}</td><td>{{ml.election_title}}</td>
+  {% if ml.state == 0 %}
+    <td><form action="message/sendMsg" method="post"><input type="submit" value="보내기"/>
+      <input type="hidden" name="msgId" value={{ml.id}}/>
+      <input type="hidden" name="election_id" value={{ml.election_id}}/></form></td>
+  {% else %}
+    <td><form action="sendMsg"><input type="submit" value="수정하기"/><input type="hidden" name="msgId" value={{ml.id}}/></form></td>
+  {% endif %}
+
+</tr>
+   {% endfor %}
+ {% endfor %}
+      </tbody>
+  </table>
+</div>
+{% endblock %}

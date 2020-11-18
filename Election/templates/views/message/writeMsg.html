@@ -1,0 +1,15 @@
+{% extends "default.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+<div style="align-content: center;">
+    <form action="addMsg" method="post">
+      <input type="text"  name="title" placeholder="title"/><br>
+      <input type="text" name="Eid" placeholder="election id"/><br>
+      <textarea name="content" placeholder="메시지 작성"></textarea>
+      <br>
+        <input type="submit" value="추가하기"/>
+    </form>
+</div>
+{% endblock %}

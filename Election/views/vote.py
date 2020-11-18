@@ -12,3 +12,4 @@ def index():
 @vote_page.route('status')
 def status():
     return 'OK', 200
+    

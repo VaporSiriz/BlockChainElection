@@ -10,6 +10,7 @@ login_page = Blueprint('login_page', __name__, template_folder='templates', stat
 @login_page.route('status')
 def status():
     return 'OK', 200
+
     
 @login_page.route('/',  methods=['GET'])
 def index():
