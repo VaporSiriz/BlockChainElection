@@ -67,6 +67,10 @@ def addMsg():
     a.election_id=request.form['Eid']
     a.msgTitle=request.form['title']
     a.msgContent=request.form['content']
+    a.election_title='title'+request.form['Eid']
+    #Election.query.filter_by(id=a.election_id).first().title
+
+
     #models.db_add(a)
     db_add(a)
 
@@ -107,6 +111,17 @@ def sendMsg():
     data=Msg.query.all()
     l=len(data)
 
+    return render_template('views/message/managerMsglist.html',data=data,l=l)
+
+
+
+@message_page.route('/delMsg' ,methods=['POST'])
+def delMsg():
+    msgid=request.form['msgId']
+    msg = Msg.query.filter_by(id=msgid).first()
+    db.session.delete(msg)
+    data=Msg.query.all()
+    l=len(data)
     return render_template('views/message/managerMsglist.html',data=data,l=l)
 
 
