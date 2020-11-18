@@ -23,7 +23,7 @@ def msglist():
 
 
 
-@message_page.route('/detailMsg/')
+@message_page.route('/detailMsg')
 def detailMsg():
 
     eid=request.args.get('variable',234)
@@ -39,7 +39,7 @@ def userMsgList():
     result=[]
     l=0
     for i in data:
-        msg=models.Msg.query.filter_by(state=1).filter_by(election_id=i.election_id).all()
+        msg=Msg.query.filter_by(state=1).filter_by(election_id=i.election_id).all()
         result.append(msg)
         l+=len(msg)
 

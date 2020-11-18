@@ -24,7 +24,7 @@
 
 
 
-  <td><a href={{url_for('message/detailMsg',variable=ml.msgContent)}}>{{ml.msgTitle}}</a></td>
+  <td><a href="detailMsg?variable={{ml.msgTitle}}">{{ml.msgTitle}}</a></td>
 
 
 
@@ -34,7 +34,8 @@
       <input type="hidden" name="msgId" value={{ml.id}}/>
       <input type="hidden" name="election_id" value={{ml.election_id}}/></form></td>
   {% else %}
-    <td><form action="sendMsg"><input type="submit" value="수정하기"/><input type="hidden" name="msgId" value={{ml.id}}/></form></td>
+    <td><form action="sendMsg"><input type="submit" value="수정하기"/>
+      <input type="hidden" name="msgId" value={{ml.id}}/></form></td>
   {% endif %}
 
 </tr>

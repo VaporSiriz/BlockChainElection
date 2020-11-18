@@ -23,7 +23,9 @@
   {% if ml.state == 0 %}
     <td><form action="sendMsg" method="post"><input type="submit" value="보내기"/>
       <input type="hidden" name="msgId" value={{ml.id}}/>
-      <input type="hidden" name="election_id" value={{ml.election_id}}/></form></td>
+      <input type="hidden" name="election_id" value={{ml.election_id}}/></form></td><td>
+      <form action="delMsg" method="post"><input type="submit" value="삭제하기"/>
+        <input type="hidden" name="msgId" value={{ml.id}}/></form></td>
   {% else %}
     <td><form action="delMsg" method="post"><input type="submit" value="삭제하기"/>
       <input type="hidden" name="msgId" value={{ml.id}}/></form></td>
