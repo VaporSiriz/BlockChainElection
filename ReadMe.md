@@ -1,10 +1,19 @@
-가상 환경 생성
-$ python3 -m venv .
+Docker-compose를 이용
+$ docker-compose up (이미지 빌드가 필요할시 --build 옵션을 이용)
+$ docker-compose stop
 
-Mysql 설치 후 연결
-
-편하게 Docker-compose를 이용하는 것이 좋음
 개발환경이라 tty모드로 실행
+
+## migrate 하는 법
+
+1. 
+python3 manager.py initdb 를 이용하여 첫 db 초기화 (migration을 하기위한 부분이므로 첫 초기화 떄 1번만 실행)
+
+이후 아래 명령어를 차례로 실행
+2. 
+python3 manager.py db migrate --message 'migrate msg'
+3. 
+manager.py db upgrade
 
 ## 블록체인(BlockChain)
 ### 1.
@@ -15,5 +24,3 @@ Mysql 설치 후 연결
 ### 1.
 일단 models는 연결 완료. 개발용으로 쓸 dev 서버가 있으면 좋을 것 같음.
 
-
-docker create network custom
