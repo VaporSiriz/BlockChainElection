@@ -154,8 +154,9 @@ class AdminMessageBox(db.Model):
             'mysql_engine': 'InnoDB'})
     
     id = db.Column(db.Integer, primary_key=True)
-    election_id = db.Column(db.Integer, nullable=False)
-    account_id = db.Column(db.Integer, nullable=False)
+    election_id = db.Column(db.Integer, nullable=True)
+    admin_id=db.Column(db.String(64),nullable=True)
+    
 
 class Msg(db.Model):
     __table_name__ = 'msg'
@@ -163,13 +164,13 @@ class Msg(db.Model):
         {'extend_existing': True,
             'mysql_charset': 'utf8mb4',
             'mysql_engine': 'InnoDB'})
-    election_title=db.Column(db.String(100),nullable=True)
+    election_title=db.Column(db.String(64),nullable=True)
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     wroteTime=db.Column(db.DateTime,nullable=True)
     sendedTime=db.Column(db.DateTime,nullable=True)
-    election_id = db.Column(db.String(100), nullable=False)
-    msgTitle = db.Column(db.String(100), nullable=False)
-    msgContent = db.Column(db.String(100), nullable=False)
+    election_id = db.Column(db.String(64), nullable=False)
+    msgTitle = db.Column(db.String(64), nullable=False)
+    msgContent = db.Column(db.String(64), nullable=False)
     state=db.Column(db.Integer,nullable=True)
 
 class UserMessageBox(db.Model):
