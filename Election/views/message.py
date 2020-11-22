@@ -11,17 +11,6 @@ import datetime
 
 message_page = Blueprint('message_page', __name__, template_folder='templates', static_folder='static')
 
-
-@message_page.route('a')
-def a():
-    return b()
-
-@message_page.route('b')
-def b():
-    return render_template('views/message/managerMsglist.html')
-
-
-
 @message_page.route('/msglist')
 def msglist():
     admin_id='admin1    '#세션에서 얻어오기
@@ -93,10 +82,13 @@ def addMsg():
     a.election_title='title'+request.form['selected']
     #Election.query.filter_by(id=a.election_id).first().title
     #models.db_add(a)
+
+
     db_add(a)
-    data=Msg.query.all()
-    l=len(data)
-    return render_template('views/message/managerMsglist.html',data=data,l=l)
+    # data=Msg.query.all()
+    # l=len(data)
+    return msglist()
+    #return render_template('views/message/managerMsglist.html',data=data,l=l)
 
 @message_page.route('/sendMsg',methods=['POST'])
 def sendMsg():
@@ -128,10 +120,9 @@ def sendMsg():
     db.session.commit()
     db.session.remove()
 
-    data=Msg.query.all()
-    l=len(data)
 
-    return render_template('views/message/managerMsglist.html',data=data,l=l)
+    return msglist()
+    #return render_template('views/message/managerMsglist.html',data=data,l=l)
 
 
 
@@ -142,8 +133,21 @@ def delMsg():
     db.session.delete(msg)
     data=Msg.query.all()
     l=len(data)
-    return render_template('views/message/managerMsglist.html',data=data,l=l)
+    return msglist()
+   # return render_template('views/message/managerMsglist.html',data=data,l=l)
 
+@message_page.route('/receiverList' ,methods=['GET'])
+def receiverList():
+    
+    eid=request.args.get('eid',234)
+    rlist = UserMessageBox.query.filter_by(election_id=eid).all()
+
+    userlist=[]
+    l=len(userlist)
+    for i in rlist:
+        userlist.append(Account.query.filter_by(id=i.userid).first())
+        
+    return render_template('views/message/receiverList.html',data=userlist,l=l)
 
 
 

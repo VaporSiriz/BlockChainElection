@@ -20,7 +20,8 @@
 
 {% for ml in data %}
 <tr><td>{{ml.state}}</td><td>{{ml.msgTitle}}</td><td>{{ml.msgContent}}</td><td>{{ml.wroteTime}}</td>
-  <td>{{ml.sendedTime}}</td><td>{{ml.election_title}} 선거방</td><td>뭐더라..</td>
+  <td>{{ml.sendedTime}}</td><td><a href="receiverList?eid={{ml.election_id}}">{{ml.election_title}} 선거방</a></td>
+  <td>뭐더라..</td>
   {% if ml.state == 0 %}
     <td><form action="sendMsg" method="post"><input type="submit" value="보내기"/>
       <input type="hidden" name="msgId" value={{ml.id}}/>
