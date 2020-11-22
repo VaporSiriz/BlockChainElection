@@ -1,12 +1,34 @@
+
+<script>
+window.onload = function() {
+   var header = document.getElementById(); 
+// header 객체에 onclick 이벤트 속성을 연결 
+header.onclick = function() { 
+  alert('클릭'); 
+// 이벤트를 제거, 한번만 실행이 됨 
+header.onclick = null; } };
+
+</script>
 {% extends "default.html" %}
 {% block title %}Index{% endblock %}
 {% block head %}
 {% endblock %}
 {% block content %}
+
 <div style="align-content: center;">
     <form action="addMsg" method="post">
       <input type="text"  name="title" placeholder="title"/><br>
-      <input type="text" name="Eid" placeholder="election id"/><br>
+      <div class="dropdown">
+
+
+      <div class="dropbtn">선거방 목록</div>
+      <select id="dropbt" name="selected">
+        {% for ml in data %}
+        <option value={{ml}}>{{ml}}</a>
+        {% endfor %}
+
+    </select>
+    <br>
       <textarea name="content" placeholder="메시지 작성"></textarea>
       <br>
         <input type="submit" value="추가하기"/>

@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, make_response, flash, request, red
 from flask_login import login_user, logout_user
 from .forms import UserLoginForm
 from models import Account
-from models import Msg,UserMessageBox,Election
+from models import Msg,UserMessageBox,Election,AdminMessageBox
 
 
 from models import db, db_add, db_flush
@@ -12,15 +12,34 @@ import datetime
 message_page = Blueprint('message_page', __name__, template_folder='templates', static_folder='static')
 
 
-@message_page.route('staris')
-def staris():
-    return 'starismessage'
+@message_page.route('a')
+def a():
+    return b()
+
+@message_page.route('b')
+def b():
+    return render_template('views/message/managerMsglist.html')
+
+
+
 @message_page.route('/msglist')
 def msglist():
-    data=Msg.query.all()
+    admin_id='admin1    '#세션에서 얻어오기
+    isadmin=AdminMessageBox.query.filter_by(admin_id=admin_id).all()
+    electionid=[]
+    for i in isadmin:
+        electionid.append(i.election_id)
+    data=[]
+    for eid in electionid:
+        data.append(Msg.query.filter_by(election_id=eid).all())
     l=len(data)
-    return render_template('views/message/managerMsglist.html',data=data,l=l)
-
+    result=[]
+    for r in data:
+        for a in r:
+            result.append(a)
+    l=len(result)
+    return render_template('views/message/managerMsglist.html',data=result,l=l)
+   
 
 
 @message_page.route('/detailMsg')
@@ -51,7 +70,12 @@ def userMsgList():
 
 @message_page.route('/writeMsg')
 def writeMsg():
-    return render_template('views/message/writeMsg.html')
+    admin_id='admin1    '#세션에서 얻어오기
+    isadmin=AdminMessageBox.query.filter_by(admin_id=admin_id).all()
+    data=[]
+    for i in isadmin:
+        data.append(i.election_id)
+    return render_template('views/message/writeMsg.html',data=data)
 
 @message_page.route('/addMsg',methods=['POST'])
 def addMsg():
@@ -62,18 +86,14 @@ def addMsg():
     now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))
     formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
     a.wroteTime=formatted_date
-
     a.state=0
-    a.election_id=request.form['Eid']
+    a.election_id=request.form['selected']
     a.msgTitle=request.form['title']
     a.msgContent=request.form['content']
-    a.election_title='title'+request.form['Eid']
+    a.election_title='title'+request.form['selected']
     #Election.query.filter_by(id=a.election_id).first().title
-
-
     #models.db_add(a)
     db_add(a)
-
     data=Msg.query.all()
     l=len(data)
     return render_template('views/message/managerMsglist.html',data=data,l=l)
@@ -123,6 +143,7 @@ def delMsg():
     data=Msg.query.all()
     l=len(data)
     return render_template('views/message/managerMsglist.html',data=data,l=l)
+
 
 
 
