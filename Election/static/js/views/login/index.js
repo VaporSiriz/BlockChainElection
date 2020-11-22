@@ -13,7 +13,7 @@ $(function () {
         },
         success: function(data) {
             alert("성공");
-            location.href = flask_util.url_for('login_page.status');
+            location.href = flask_util.url_for('index_page.index');
         },
         error: function(data) {
             alert("실패.");

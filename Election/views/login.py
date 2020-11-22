@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, make_response, flash, request, redirect, \
                   url_for, session
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 from .forms import UserLoginForm
 from models import Account
 
@@ -17,6 +17,9 @@ def index():
     # Here we use a class of some kind to represent and validate our
     # client-side form data. For example, WTForms is a library that will
     # handle this for us, and we use a custom LoginForm to validate.
+    print("current_user : ", current_user)
+    if current_user.is_authenticated:
+        return redirect(url_for('index_page.index'))
     form = UserLoginForm()
 
     return render_template('views/login/index.html', form=form)
@@ -48,7 +51,7 @@ def login():
     return '', 400
 #    return render_template('views/login/login.html', form=form)
 
-@login_page.route('/logout',  methods=['POST'])
+@login_page.route('/logout',  methods=['GET'])
 def logout():
     logout_user()
     session.clear()

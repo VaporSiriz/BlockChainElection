@@ -86,8 +86,7 @@ class Account(db.Model, UserMixin):
 
         network_byte = b'00'
         network_public_key = network_byte + ripemed160_bpk_hex
-        network_public_key_bytes = codecs.decode(
-            network_public_key, 'hex')
+        network_public_key_bytes = codecs.decode(network_public_key, 'hex')
 
         sha256_bpk = hashlib.sha256(network_public_key_bytes)
         sha256_bpk_digest = sha256_bpk.digest()

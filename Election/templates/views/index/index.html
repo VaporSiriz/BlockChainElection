@@ -8,6 +8,8 @@
     <h1>BLockChain Election</h1>
     <h1>BLockChain Election</h1>
     <h1>BLockChain Election</h1>
-    
+    {% if current_user.is_authenticated %}
+        Hi {{ current_user.username }}!
+    {% endif %}
 </div>
 {% endblock %}

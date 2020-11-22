@@ -17,6 +17,8 @@ services:
       interval: 3s
       timeout: 1s
       retries: 10
+    networks:
+      - custom
   
   election:
     build:
@@ -30,12 +32,20 @@ services:
       - DB_USER=root
       - DB_PASSWORD=rootpassword
       - server_build_type=Local
+      - BlockChainURL=blockchain
+      - BlockChainNumber=3
+      - BlockChainPort=5000
     ports:
       - "5000:5000"
     links:
       - db
+      - blockchain1
+      - blockchain2
+      - blockchain3
     sysctls:
       - net.core.somaxconn=4096
+    networks:
+      - custom
     depends_on:
       - db
     tty: true
@@ -48,13 +58,18 @@ services:
       - ./BlockChain:/app
     ports:
       - "5001:5000"
-    links:
-      - db
+    environment:
+      - BlockChainURL1=http://blockchain2:5000
+      - BlockChainURL2=http://blockchain3:5000
+    networks:
+      - custom
+    external_links:
+      - blockchain1:blockchain2
+      - blockchain2:blockchain3
     sysctls:
       - net.core.somaxconn=4096
-    depends_on:
-      - db
-    tty: true
+    #tty: true
+    command: python3 manager.py runserver -p 5000 -h 0.0.0.0
 
   blockchain2:
     build:
@@ -64,13 +79,18 @@ services:
       - ./BlockChain:/app
     ports:
       - "5002:5000"
-    links:
-      - db
+    environment:
+      - BlockChainURL1=http://blockchain1:5000
+      - BlockChainURL2=http://blockchain3:5000
+    networks:
+      - custom
+    external_links:
+      - blockchain1:blockchain1
+      - blockchain3:blockchain3
     sysctls:
       - net.core.somaxconn=4096
-    depends_on:
-      - db
-    tty: true
+    #tty: true
+    command: python3 manager.py runserver -p 5000 -h 0.0.0.0
 
   blockchain3:
     build:
@@ -80,10 +100,20 @@ services:
       - ./BlockChain:/app
     ports:
       - "5003:5000"
-    links:
-      - db
+    environment:
+      - BlockChainURL1=http://blockchain1:5000
+      - BlockChainURL2=http://blockchain2:5000
+    networks:
+      - custom
+    external_links:
+      - blockchain1:blockchain1
+      - blockchain2:blockchain2
     sysctls:
       - net.core.somaxconn=4096
-    depends_on:
-      - db
-    tty: true
+    #tty: true
+    command: python3 manager.py runserver -p 5000 -h 0.0.0.0
+
+
+networks:
+  custom:
+    external: true

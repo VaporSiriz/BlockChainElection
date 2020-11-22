@@ -24,6 +24,6 @@ file_handler = logging.handlers.TimedRotatingFileHandler(
 file_handler.setFormatter(formatter)
 
 LOGGERS = [file_handler]
-
-BlockChainUrl = os.getenv("BlockChain_URL", "127.0.0.1")
-BlockChainPorts = range(5000, 5003)# 5000:5003 번포트 사용
+BLOCKCHAINURL = os.getenv("BlockChainURL", "127.0.0.1")
+BLOCKCHAINNUMBER = int(os.getenv("BlockChainNumber", 0))
+BLOCKCHAINFORMAT = 'http://{0}{1}:5000/{2}'
