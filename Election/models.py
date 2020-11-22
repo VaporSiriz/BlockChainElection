@@ -86,8 +86,7 @@ class Account(db.Model, UserMixin):
 
         network_byte = b'00'
         network_public_key = network_byte + ripemed160_bpk_hex
-        network_public_key_bytes = codecs.decode(
-            network_public_key, 'hex')
+        network_public_key_bytes = codecs.decode(network_public_key, 'hex')
 
         sha256_bpk = hashlib.sha256(network_public_key_bytes)
         sha256_bpk_digest = sha256_bpk.digest()
@@ -113,15 +112,20 @@ class Election(db.Model):
             'mysql_engine': 'InnoDB'})
  
     id = db.Column(db.Integer, primary_key=True)
+    state = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(256), nullable=False)
     desc = db.Column(db.String(4196), nullable=False)
+    create_date = db.Column(db.DateTime(), nullable=False)
+    startat = db.Column(db.DateTime(), nullable=False)
+    endat = db.Column(db.DateTime(), nullable=False)
 
-    def __init__(self, title, desc):
-        self.title = title
-        self.desc = desc
+    # def __init__(self, title, desc, create_date):
+    #     self.title = title
+    #     self.desc = desc
+    #     self.create_date = create_date
 
 class Candidate(db.Model):
-    __table_name__ = 'election'
+    __table_name__ = 'candidate'
     __table_args__ = (
         {'extend_existing': True,
             'mysql_charset': 'utf8mb4',
@@ -131,9 +135,9 @@ class Candidate(db.Model):
     
 
 
-    def __init__(self, title, desc):
-        self.title = title
-        self.desc = desc
+    # def __init__(self, title, desc):
+    #     self.title = title
+    #     self.desc = desc
 
 class Vote(db.Model):
     __table_name__ = 'vote'

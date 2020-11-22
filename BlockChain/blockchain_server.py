@@ -4,11 +4,39 @@ from flask import request
 
 import blockchain
 import wallet
+import urllib
+import threading
+import requests
+import asyncio
 
+BLOCKCHAIN_NEIGHBOURS_SYNC_TIME_SEC = 5
 
 app = Flask(__name__)
 cache = {}
 
+def init_app():
+    app.config.from_object('default_config')
+    for logger in app.config.get('LOGGERS', ()):
+        app.logger.addHandler(logger)
+
+    return app
+
+# def health_check_other_machine():
+#     for url in app.config['BlockChainUrls']:
+#         while 
+
+
+#         if len(cache.keys()) == len(app.config['BlockChainUrls']):
+            
+#         print('url : ', url)
+#         u = urllib.parse.urlparse(url)
+#         print('u : ', u.netloc)
+#         try:
+#             response = requests.get(url, timeout=3)
+#             if response.status_code == 200:
+#                 cache[url] = url
+#         except Exception as ex:
+#             print('ex : ', ex)
 
 def get_blockchain():
     cached_blockchain = cache.get('blockchain')
@@ -23,6 +51,13 @@ def get_blockchain():
             'blockchain_address': miners_wallet.blockchain_address})
     return cache['blockchain']
 
+@app.route('/status', methods=['GET'])
+def status():
+    return 'OK', 200
+
+@app.route('/health_check', methods=['GET'])
+def health_check():
+    return 'OK', 200
 
 @app.route('/chain', methods=['GET'])
 def get_chain():
@@ -122,17 +157,11 @@ def get_total_amount():
         'amount': get_blockchain().calculate_total_amount(blockchain_address)
     }), 200
 
+@app.before_request
+def before_request():
+    pass
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
-    parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000,
-                        type=int, help='port to listen on')
-    args = parser.parse_args()
-    port = args.port
+@app.after_request
+def after_request(response):
 
-    app.config['port'] = port
-
-    get_blockchain().run()
-
-    app.run(host='0.0.0.0', port=port, threaded=True, debug=True)
+    return response
