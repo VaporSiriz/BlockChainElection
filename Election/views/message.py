@@ -40,9 +40,10 @@ def detailMsg():
 
 
 
-@message_page.route('/userMsgList')
+@message_page.route('/userMsgList',methods=['GET'])
 def userMsgList():
-    userid=1
+    userid=request.args.get('eid',1)
+  
     data=UserMessageBox.query.filter_by(userid=userid).all()
     result=[]
     l=0
@@ -50,16 +51,12 @@ def userMsgList():
         msg=Msg.query.filter_by(state=1).filter_by(election_id=i.election_id).all()
         result.append(msg)
         l+=len(msg)
-
-
-
-
     return render_template('views/message/UserMsglist.html',l=l,result=result)
 
 
 @message_page.route('/writeMsg')
 def writeMsg():
-    admin_id='admin1    '#세션에서 얻어오기
+    admin_id='admin1'#세션에서 얻어오기
     isadmin=AdminMessageBox.query.filter_by(admin_id=admin_id).all()
     data=[]
     for i in isadmin:
@@ -102,15 +99,16 @@ def sendMsg():
     #
     # print date
 
-    userid=1
-    usermsgbox = UserMessageBox.query.filter_by(userid=userid).filter_by(election_id=msg.election_id).first()
-    if usermsgbox:
-        pass
-    else:
-        a=UserMessageBox()
-        a.userid=userid
-        a.election_id=msg.election_id
-        db_add(a)
+    #userid=1
+    usermsgbox = UserMessageBox.query.filter_by(election_id=msg.election_id).all()
+    # if usermsgbox:
+    #     pass
+    # else:
+    #     a=UserMessageBox()
+    #     a.userid=userid
+    #     a.election_id=msg.election_id
+    #     a.state=0
+    #     db_add(a)
 
     now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))
     formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
