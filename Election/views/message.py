@@ -33,10 +33,9 @@ def msglist():
 
 @message_page.route('/detailMsg')
 def detailMsg():
-
-    eid=request.args.get('variable',234)
-
-    return str(eid)
+    mid=request.args.get('variable',234)
+    msg=Msg.query.filter_by(id=mid).first()
+    return render_template('views/message/detailMsg.html',ml=msg)
 
 
 

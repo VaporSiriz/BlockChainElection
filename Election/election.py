@@ -16,11 +16,6 @@ app.register_blueprint(vote.vote_page, url_prefix='/vote')
 app.register_blueprint(message.message_page, url_prefix='/message')
 app.register_blueprint(election.election_page, url_prefix='/election')
 
-<<<<<<< HEAD
-# csrf = CSRFProtect()    # 사이트위조공격 방지
-# csrf.init_app(app)
-=======
->>>>>>> 17998b7f67f5349880ea0ce795acd3f2174c22b3
 #debugpy.listen(("0.0.0.0", 5678))
 
 def init_app():
