@@ -12,15 +12,15 @@ def index():
 
 @election_page.route('/add', methods=['GET', 'POST'])
 def addElection():
-    form = AddElectionForm()
-    if form.validate_on_submit():
+    form = AddElectionForm(request.form)
+    if form.validate():
         election = Election()
-        election.title = form.data.get('title')
-        election.desc = form.data.get('desc')
+        election.title = form['title'].data
+        election.desc = form['desc'].data
         election.create_date = datetime.now()
         election.state = 0
-        election.startat = form.data.get('startat')
-        election.endat = form.data.get('endat')
+        election.startat = form['startat'].data
+        election.endat = form['endat'].data
 
         db.session.add(election)
         db.session.commit()
