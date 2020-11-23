@@ -11,7 +11,6 @@
     <div class="row mt-5">
         <div class="col-10 ">
             <form method="POST">
-                {{ form.csrf_token }}
                 <div class="form-group col align-self-center">
                     {{ form.title.label("선거 이름") }}
                     {{ form.title(class="form-control", placeholder="선거 이름") }}
