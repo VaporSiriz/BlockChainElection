@@ -43,12 +43,18 @@
                     <li class="nav-item">
                       <a class="nav-link" href="#">투표생성</a>
                     </li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="/login/logout">로그아웃</a>
+                    </li>
+                    {% else %}
                     <li class="nav-item">
                       <a class="nav-link" href="/login">로그인</a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" href="#">회원가입</a>
                     </li>
+                    {% endif %}
                   </ul>
                 </div>
                   <!--
@@ -67,50 +73,6 @@
             </div>
             <!-- /#page-wrapper -->
 
-        </div>
-        <!-- UID Search modal -->
-        <div class="modal fade" id="modal-uid-search" tabindex="-1" role="dialog" aria-labelledby="UidSearchModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">
-                            <i class="fa fa-search"></i>
-                            UID Translate
-                        </h4>
-                    </div>
-                    <div class="modal-body">
-                        <form id="frmUidTranslate" method="POST" action="">
-                            <div class="row">
-                                <div class="col-lg-4">
-                                    <select class="form-control" id="to" name="to">
-                                        <option value="str_uid">UID to STR_UID</option>
-                                        <option value="uid">STR_UID to UID</option>
-                                        <option value="username_to_user_idx">UserName to User_idx</option>
-                                        <option value="username_to_account_idx">UserName to Account_idx</option>
-                                        <option value="user_idx_to_account_idx">User_idx to Account_idx</option>
-                                        <option value="user_idx_to_username">User_idx to UserName</option>
-                                        <option value="account_idx_to_user_idx">Account_idx to User_idx</option>
-                                        <option value="account_idx_to_to_username">Account_idx to UserName</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <br/>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <textarea class="form-control" id="text_area_input" name="text_area_input" rows="20"></textarea>
-                                </div>
-                                <div class="col-lg-6">
-                                    <span class="form-control" id='text_area_output' name=​'text_area_output' style="border:1px solid #dadada;overflow-x:hidden;overflow-x:auto;overflow-y:scroll;height:414px;display:inline-block;">
-                                    </span>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /#wrapper -->
         </div>
         {% block modals %}{% endblock %}
         {{ flask_util_js.js }}
