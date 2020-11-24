@@ -11,17 +11,6 @@ import datetime
 
 message_page = Blueprint('message_page', __name__, template_folder='templates', static_folder='static')
 
-
-@message_page.route('a')
-def a():
-    return b()
-
-@message_page.route('b')
-def b():
-    return render_template('views/message/managerMsglist.html')
-
-
-
 @message_page.route('/msglist')
 def msglist():
     admin_id='admin1    '#세션에서 얻어오기
@@ -44,16 +33,16 @@ def msglist():
 
 @message_page.route('/detailMsg')
 def detailMsg():
-
-    eid=request.args.get('variable',234)
-
-    return str(eid)
-
+    mid=request.args.get('variable',234)
+    msg=Msg.query.filter_by(id=mid).first()
+    return render_template('views/message/detailMsg.html',ml=msg)
 
 
-@message_page.route('/userMsgList')
+
+@message_page.route('/userMsgList',methods=['GET'])
 def userMsgList():
-    userid=1
+    userid=request.args.get('eid',1)
+  
     data=UserMessageBox.query.filter_by(userid=userid).all()
     result=[]
     l=0
@@ -61,16 +50,12 @@ def userMsgList():
         msg=Msg.query.filter_by(state=1).filter_by(election_id=i.election_id).all()
         result.append(msg)
         l+=len(msg)
-
-
-
-
     return render_template('views/message/UserMsglist.html',l=l,result=result)
 
 
 @message_page.route('/writeMsg')
 def writeMsg():
-    admin_id='admin1    '#세션에서 얻어오기
+    admin_id='admin1'#세션에서 얻어오기
     isadmin=AdminMessageBox.query.filter_by(admin_id=admin_id).all()
     data=[]
     for i in isadmin:
@@ -93,10 +78,13 @@ def addMsg():
     a.election_title='title'+request.form['selected']
     #Election.query.filter_by(id=a.election_id).first().title
     #models.db_add(a)
+
+
     db_add(a)
-    data=Msg.query.all()
-    l=len(data)
-    return render_template('views/message/managerMsglist.html',data=data,l=l)
+    # data=Msg.query.all()
+    # l=len(data)
+    return msglist()
+    #return render_template('views/message/managerMsglist.html',data=data,l=l)
 
 @message_page.route('/sendMsg',methods=['POST'])
 def sendMsg():
@@ -110,15 +98,16 @@ def sendMsg():
     #
     # print date
 
-    userid=1
-    usermsgbox = UserMessageBox.query.filter_by(userid=userid).filter_by(election_id=msg.election_id).first()
-    if usermsgbox:
-        pass
-    else:
-        a=UserMessageBox()
-        a.userid=userid
-        a.election_id=msg.election_id
-        db_add(a)
+    #userid=1
+    usermsgbox = UserMessageBox.query.filter_by(election_id=msg.election_id).all()
+    # if usermsgbox:
+    #     pass
+    # else:
+    #     a=UserMessageBox()
+    #     a.userid=userid
+    #     a.election_id=msg.election_id
+    #     a.state=0
+    #     db_add(a)
 
     now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))
     formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -128,10 +117,9 @@ def sendMsg():
     db.session.commit()
     db.session.remove()
 
-    data=Msg.query.all()
-    l=len(data)
 
-    return render_template('views/message/managerMsglist.html',data=data,l=l)
+    return msglist()
+    #return render_template('views/message/managerMsglist.html',data=data,l=l)
 
 
 
@@ -142,8 +130,21 @@ def delMsg():
     db.session.delete(msg)
     data=Msg.query.all()
     l=len(data)
-    return render_template('views/message/managerMsglist.html',data=data,l=l)
+    return msglist()
+   # return render_template('views/message/managerMsglist.html',data=data,l=l)
 
+@message_page.route('/receiverList' ,methods=['GET'])
+def receiverList():
+    
+    eid=request.args.get('eid',234)
+    rlist = UserMessageBox.query.filter_by(election_id=eid).all()
+
+    userlist=[]
+    l=len(userlist)
+    for i in rlist:
+        userlist.append(Account.query.filter_by(id=i.userid).first())
+        
+    return render_template('views/message/receiverList.html',data=userlist,l=l)
 
 
 

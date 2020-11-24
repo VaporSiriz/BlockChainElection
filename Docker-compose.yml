@@ -27,7 +27,7 @@ services:
     volumes:
       - ./Election:/app
     environment:
-      - DB_URL=db
+      - DB_URL=db:3306
       - DB_NAME=election
       - DB_USER=root
       - DB_PASSWORD=rootpassword

@@ -1,37 +1,41 @@
-
-<script>
-window.onload = function() {
-   var header = document.getElementById(); 
-// header 객체에 onclick 이벤트 속성을 연결 
-header.onclick = function() { 
-  alert('클릭'); 
-// 이벤트를 제거, 한번만 실행이 됨 
-header.onclick = null; } };
-
-</script>
 {% extends "default.html" %}
 {% block title %}Index{% endblock %}
 {% block head %}
 {% endblock %}
 {% block content %}
 
-<div style="align-content: center;">
+<style>
+.diva{
+ align-content: center; 
+ width:100%;
+ margin-top: 50px;
+ text-align: center;
+}
+#area{
+  text-align: left;
+  width:50%;
+  display:inline-block;
+  border:1px solid red;
+}
+
+</style>
+<div class="diva" style="align-content: center;">
+  <div id="area">
     <form action="addMsg" method="post">
-      <input type="text"  name="title" placeholder="title"/><br>
-      <div class="dropdown">
+      제목 : <input type="text"  name="title" placeholder="title"/>
 
 
-      <div class="dropbtn">선거방 목록</div>
+    <br>
+      <textarea name="content" cols="80%" rows="10" placeholder="메시지 작성"></textarea>
+      <br>
+      선거방 목록
       <select id="dropbt" name="selected">
         {% for ml in data %}
         <option value={{ml}}>{{ml}}</a>
         {% endfor %}
-
     </select>
-    <br>
-      <textarea name="content" placeholder="메시지 작성"></textarea>
-      <br>
         <input type="submit" value="추가하기"/>
     </form>
+  </div>
 </div>
 {% endblock %}

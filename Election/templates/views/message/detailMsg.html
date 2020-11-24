@@ -3,13 +3,44 @@
 {% block head %}
 {% endblock %}
 {% block content %}
-<div style="align-content: center;">
-    <form action="addMsg" method="post">
-      <input type="text"  name="title" placeholder="title"/><br>
-      <input type="text" name="Eid" placeholder="election id"/><br>
-      <textarea name="content" placeholder="메시지 작성"></textarea>
+
+
+
+
+<style>
+  .diva{
+   align-content: center; 
+   width:100%;
+   margin-top: 50px;
+   text-align: center;
+  }
+  #area{
+    text-align: left;
+    width:50%;
+    display:inline-block;
+    border:1px solid red;
+  }
+  #content{
+    margin-left:10%;
+    width:80%;
+    text-align: center;
+    border:1px solid red;
+  }
+  
+  </style>
+  <div class="diva" style="align-content: center;">
+    <div id="area">
+      <div>제목 : {{ml.msgTitle}}
+      </div>
+        
+  
       <br>
-        <input type="submit" value="추가하기"/>
-    </form>
-</div>
+      내용 <br>
+      <div id="content">{{ml.msgContent}}
+      </div>
+        <br>
+      
+    </div>
+  </div>
+
 {% endblock %}
