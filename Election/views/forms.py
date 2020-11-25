@@ -1,4 +1,4 @@
-from wtforms import Form, BooleanField, TextField, StringField, PasswordField, SelectField, TextAreaField, validators, DateTimeField, DateField
+from wtforms import Form, StringField, PasswordField, validators
 from wtforms.fields.html5 import DateTimeLocalField
 
 class UserLoginForm(Form):
