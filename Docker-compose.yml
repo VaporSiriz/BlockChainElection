@@ -1,11 +1,17 @@
 version: '3'
 
+volumes:
+  election_data:
+  log_data:
+
 services:
   db:
     image: mysql:5.7
     volumes:
-      - ./data:/var/lib/mysql
+      - election_data:/var/lib/mysql
+      - log_data:/var/log
     environment:
+      - MYSQL_DATABASE_NAME=election
       - MYSQL_ROOT_PASSWORD=rootpassword
       - MYSQL_USER=user
       - MYSQL_PASSWORD=user
