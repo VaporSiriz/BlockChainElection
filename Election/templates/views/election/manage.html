@@ -32,13 +32,11 @@
                 <td>
                     <form>
                         <!-- <button type="button" class="btn btn-dark btn-sm" onclick="location.href='/'">수정</button> -->
-                        <a href="/election/modify/{{data.id}}" class="btn btn-dark btn-sm">수정</a>
-                        
                         {% if data.state == 0 %}
-                        <button type="button" class="btn btn-dark btn-sm">시작</button>
-                        <button type="button" class="btn btn-dark btn-sm">삭제</button>
+                        <a href="/election/modify/{{data.id}}" class="btn btn-dark btn-sm">수정</a>
+                        <button type="submit" class="btn btn-dark btn-sm" id="startbtn" name="startbtn" value="{{ data.id }}">시작</button>
                         {% else %}
-                        <button type="button" class="btn btn-dark btn-sm">종료</button>
+                        <button type="submit" class="btn btn-dark btn-sm" id="endbtn" name="endbtn" value="{{ data.id }}">종료</button>
                         {% endif %}
                 </form>
                 </td>
@@ -110,7 +108,7 @@
                 <td>{{ data.endat }}</td>
                 <td>
                     <form>
-                        <button type="button" class="btn btn-dark btn-sm">삭제</button>
+                        <button type="submit" class="btn btn-dark btn-sm" id="delbtn" name="delbtn" value="{{ data.id }}">삭제</button>
                     </form>
                 </td>
             </tr>

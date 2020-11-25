@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, make_response, redirect, request
 from flask.helpers import url_for
 from models import *
-from .forms import AddElectionForm, ModifyElectionForm
-from datetime import datetime, timedelta
+from .forms import AddElectionForm, ManageElectionForm, ModifyElectionForm
+from datetime import datetime, time, timedelta
 
 election_page = Blueprint('election_page', __name__, template_folder='templates', static_folder='static')
 
@@ -32,12 +32,27 @@ def addElection():
 
 @election_page.route('/manage', methods=['GET', 'POST'])
 def manageElection():
-
+    form = ManageElectionForm()
     now = datetime.now() + timedelta(hours=9)
     elections = Election.query.all()
-    
+
+    if form.validate():
+        if request.args.get('startbtn') != None:
+            election = Election.query.get(request.args.get('startbtn'))
+            election.startat = now + timedelta(seconds=-1)
+            db.session.commit()
+            return redirect(url_for('election_page.manageElection'))
+        elif request.args.get('endbtn') != None:
+            election = Election.query.get(request.args.get('endbtn'))
+            election.endat = now + timedelta(seconds=-1)
+            db.session.commit()
+        elif request.args.get('delbtn') != None:
+            election = Election.query.get(request.args.get('delbtn'))
+            db.session.delete(election)
+            db.session.commit()
+            return redirect(url_for('election_page.manageElection'))
+
     for i in elections:
-        print(i.startat >= now)
         if i.endat >= now:   # 종료시간이 지나지 않으면(진행(1) or 대기(0))
             if (i.startat < now) and (i.state == 0):
                 i.state = 1
@@ -54,7 +69,7 @@ def manageElection():
     end_list = Election.query.filter(Election.endat < now).order_by(Election.create_date.asc())
     end_list = end_list.paginate(page2, per_page=4)
 
-    return render_template('views/election/manage.html', res_list=res_list, end_list=end_list)
+    return render_template('views/election/manage.html', res_list=res_list, end_list=end_list, form=form)
 
 @election_page.route('/modify/<int:id>', methods=['GET', 'POST'])
 def modifyElection(id):
