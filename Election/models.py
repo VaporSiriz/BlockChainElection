@@ -174,6 +174,7 @@ class UserMessageBox(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userid=db.Column(db.Integer,nullable=False)
     election_id = db.Column(db.Integer, nullable=False)
+    msg_id= db.Column(db.Integer, nullable=False)
     state=db.Column(db.Integer, nullable=False)
 
     

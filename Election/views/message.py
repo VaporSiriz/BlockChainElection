@@ -13,7 +13,7 @@ message_page = Blueprint('message_page', __name__, template_folder='templates', 
 
 @message_page.route('/msglist')
 def msglist():
-    admin_id='admin1    '#세션에서 얻어오기
+    admin_id='admin1'#세션에서 얻어오기
     isadmin=AdminMessageBox.query.filter_by(admin_id=admin_id).all()
     electionid=[]
     for i in isadmin:

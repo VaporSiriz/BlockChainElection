@@ -34,7 +34,6 @@ def fillelectiontable():
         election.create_date = datetime.now() + timedelta(hours=9)
         election.startat = datetime.now() + timedelta(hours=9)
         election.endat = datetime.now() + timedelta(hours=9, minutes=i)
-
         db.session.add(election)
         db.session.commit()
 
