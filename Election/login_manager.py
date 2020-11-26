@@ -18,32 +18,24 @@ def init_app(app):
 def load_user(id):
     return db.session.query(Account).get(int(id))
 
+# ldap module doesn't exist, so only code
 class AdminType(Enum):
     NONE = 0
     LDAP = 1
-
 
 # permissions
 class AccountRoles(Enum):
     Admin = 0
     User = 1
 
-
-class AdminGroup(Enum):
-    NONE = 0
-    FTT = 1
-    SS = 2
-    ALL = 3
-
-
-# Admin Roles
-role_user = RoleNeed(AccountRoles.User)
+# User Roles
 role_admin = RoleNeed(AccountRoles.Admin)
+role_user = RoleNeed(AccountRoles.User)
 
 role_list = [role_user, role_admin]
 
 #Permissions
-permission_voter = Permission(role_user)
 permission_admin = Permission(role_admin)
+permission_user = Permission(role_user)
 
-permission_list = [permission_voter, permission_admin]
+permission_list = [permission_user, permission_admin]

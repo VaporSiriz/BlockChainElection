@@ -5,7 +5,7 @@ from models import Account, Election
 from models import db, db_commit, db_add
 import election
 from datetime import datetime, timedelta
-
+from login_manager import AccountRoles
 
 def configure_app():
     app = election.init_app()
@@ -40,9 +40,16 @@ def fillelectiontable():
 
 @manager.command
 def addAccount(user, password):
-    account = Account(user, password)
+    account = Account(user, password, AccountRoles.User.value)
     db_add(account)
     db_commit()
+
+@manager.command
+def addAdminAccount(user, password):
+    account = Account(user, password, AccountRoles.Admin.value)
+    db_add(account)
+    db_commit()
+
 
 if __name__ == '__main__':
     manager.run()

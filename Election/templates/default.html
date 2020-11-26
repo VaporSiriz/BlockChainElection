@@ -40,9 +40,11 @@
                     <li class="nav-item">
                       <a class="nav-link" href="/message/msglist">메시지함</a>
                     </li>
+                    {% if is_admin_account() %}
                     <li class="nav-item">
                       <a class="nav-link" href="#">투표생성</a>
                     </li>
+                    {% endif %}
                     {% if current_user.is_authenticated %}
                     <li class="nav-item">
                       <a class="nav-link" href="/login/logout">로그아웃</a>
@@ -52,7 +54,7 @@
                       <a class="nav-link" href="/login">로그인</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="#">회원가입</a>
+                      <a class="nav-link" href="/register">회원가입</a>
                     </li>
                     {% endif %}
                   </ul>

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, make_response, flash, request, redirect, url_for
 from flask_login import login_user, login_required, current_user
 from .forms import UserLoginForm
+from login_manager import role_list
 
 from models import db, db_add, db_flush
 index_page = Blueprint('index_page', __name__, template_folder='templates', static_folder='static')

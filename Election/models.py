@@ -27,20 +27,6 @@ def db_end():
 def db_rollback():
     db.session.rollback()
 
-class Admin(db.Model):
-    __table_name__ = 'admin'
-    __table_args__ = (
-        {'extend_existing': True,
-            'mysql_charset': 'utf8mb4',
-            'mysql_engine': 'InnoDB'})
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-
-    def __init__(self, username, password):
-        self.username = username
-        self.password = generate_password_hash(str(password))
-
 class Account(db.Model, UserMixin):
     __table_name__ = 'account'
     __table_args__ = (
@@ -51,13 +37,15 @@ class Account(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.Integer, nullable=False, default=1, server_default='0', doc='0:ADMIN,1:VOTER')
     _private_key = db.Column(db.String(256), nullable=False, doc="블록체인 address를 생성하기 위한 private_key")
     _public_key = db.Column(db.String(256), nullable=False, doc="블록체인 address를 생성하기 위한 public_key")
     _blockchain_address = db.Column(db.String(256), nullable=False, doc="블록 체인을 이용하기 위한 address")
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, role):
         self.username = username
         self.password = generate_password_hash(str(password))
+        self.role = role
         self._private_key = SigningKey.generate(curve=NIST256p)
         self._public_key = self._private_key.get_verifying_key()
         self._blockchain_address = self.generate_blockchain_address()

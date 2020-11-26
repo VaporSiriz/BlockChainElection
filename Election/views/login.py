@@ -1,23 +1,31 @@
 from flask import Blueprint, render_template, make_response, flash, request, redirect, \
-                  url_for, session
-from flask_login import login_user, logout_user, current_user
+                  url_for, session, current_app
+from flask_login import login_user, logout_user, current_user, login_required
 from .forms import UserLoginForm
 from models import Account
-
+from flask_principal import Identity, AnonymousIdentity, identity_changed, identity_loaded
+from login_manager import role_list
 from models import db, db_add, db_flush
 login_page = Blueprint('login_page', __name__, template_folder='templates', static_folder='static')
+
+@identity_loaded.connect
+def on_identity_loaded(sender, identity):
+    if current_user.is_authenticated:
+        identity.id = current_user.id
+        identity.user = current_user
+        for i in range(0, current_user.role + 1):
+            identity.provides.add(role_list[i])
 
 @login_page.route('status')
 def status():
     return 'OK', 200
 
-    
+
 @login_page.route('/',  methods=['GET'])
 def index():
     # Here we use a class of some kind to represent and validate our
     # client-side form data. For example, WTForms is a library that will
     # handle this for us, and we use a custom LoginForm to validate.
-    print("current_user : ", current_user)
     if current_user.is_authenticated:
         return redirect(url_for('index_page.index'))
     form = UserLoginForm()
@@ -42,7 +50,8 @@ def login():
             # Login and validate the user.
             # user should be an instance of your `User` class
             login_user(user)
-
+            identity = Identity(user.id)
+            identity_changed.send(current_app._get_current_object(), identity=identity)
             #if not is_safe_url(next):
             #    return flask.abort(400)
 
@@ -52,8 +61,10 @@ def login():
 #    return render_template('views/login/login.html', form=form)
 
 @login_page.route('/logout',  methods=['GET'])
+@login_required
 def logout():
     logout_user()
     session.clear()
-
+    identity_changed.send(current_app._get_current_object(),
+                          identity=AnonymousIdentity())
     return redirect(url_for('index_page.index'))

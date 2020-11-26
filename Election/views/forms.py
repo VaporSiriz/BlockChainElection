@@ -5,6 +5,10 @@ class UserLoginForm(Form):
     username = StringField('user_id', validators=[validators.InputRequired('')])
     password = PasswordField('password', validators=[validators.InputRequired('')])
 
+class UserRegisterForm(Form):
+    username = StringField('user_id', validators=[validators.InputRequired('')])
+    password = PasswordField('password', validators=[validators.InputRequired('')])
+
 class AddElectionForm(Form):
     title = StringField('title', validators=[validators.InputRequired()])
     desc = StringField('desc', validators=[validators.InputRequired()])
