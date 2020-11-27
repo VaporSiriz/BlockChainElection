@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, make_response, redirect, request
 from flask.helpers import url_for
 from models import *
-#from .forms import AddElectionForm, ManageElectionForm, ModifyElectionForm
-from datetime import datetime, time, timedelta
-
+from .forms import AddElectionForm, ManageElectionForm, ModifyElectionForm
+from datetime import datetime, timedelta
+from login_manager import *
+from flask_login import login_user, login_required, current_user
 election_page = Blueprint('election_page', __name__, template_folder='templates', static_folder='static')
 
 @election_page.route('/')
@@ -11,6 +12,7 @@ def index():
     
     return render_template('views/election/list.html')
 
+@permission_admin.require(http_exception=403)
 @election_page.route('/add', methods=['GET', 'POST'])
 def addElection():
     form = AddElectionForm(request.form)
@@ -25,11 +27,21 @@ def addElection():
 
         db.session.add(election)
         db.session.commit()
+        adminbox=AdminMessageBox()
+
+        el =Election.query.filter_by(title=form['title'].data).filter_by(desc=form['desc'].data).filter_by(state=0).filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
+        #.filter_by(create_date=datetime.now()).filter_by(state=0).filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
+
+        adminbox.election_id=el.id
+        adminbox.admin_id=current_user.id
+        db.session.add(adminbox)
+        db.session.commit()
+
 
         return redirect('/')
     return render_template('views/election/add.html', form=form)
 
-
+@permission_admin.require(http_exception=403)
 @election_page.route('/manage', methods=['GET', 'POST'])
 def manageElection():
     form = ManageElectionForm()
@@ -71,6 +83,7 @@ def manageElection():
 
     return render_template('views/election/manage.html', res_list=res_list, end_list=end_list, form=form)
 
+@permission_admin.require(http_exception=403)
 @election_page.route('/modify/<int:id>', methods=['GET', 'POST'])
 def modifyElection(id):
     form = ModifyElectionForm(request.form)
