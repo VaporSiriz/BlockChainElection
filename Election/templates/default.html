@@ -38,7 +38,15 @@
                 <div class="justify-content-end" id="navbarColor02">
                   <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
+
+                      
+
+                      {% if is_admin_account() %}
                       <a class="nav-link" href="/message/msglist">메시지함</a>
+                      {%else %}
+                      <a class="nav-link" href="message/userMsgList">메시지함</a>
+                      {% endif %}
+
                     </li>
                     {% if is_admin_account() %}
                     <li class="nav-item">

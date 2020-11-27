@@ -4,38 +4,29 @@
 {% endblock %}
 {% block content %}
 
+<div class="container mt-5" style="text-align: center">
+  <h1 style="text-align: left;">등록된 선거</h1>
+  <table class="table table-bordered table-sm mt-3">
+      <thead>
+        <tr>
+  				<td colspan="5" align="right"> 총 내역 목록 : <b>{{l}}</b>개
+  			</tr>
+          <tr class="bg-dark" style="color: white">
 
-
-
-
-<div style="align-content: center;">
-  <table class="table">
-    <thead>
-      <tr>
-        <td colspan="5" align="right"> 총 내역 목록 : <b>{{l}}</b>개
-          <td><form action="writeMsg"><input type="submit" value="추가"/></form></td>
-      </tr>
-    <tr>
-    <th>상태</th>	<th>메시지 제목</th>
-    <th>받은 시간</th><th>발신 선거방</th>
-    </tr>
-    </thead>
-    <tbody>
+              <th scope="col">상태</th>	<th scope="col">메시지 제목</th>	<th scope="col">메시지 내용</th>	
+              <th scope="col">작성 시간</th><th scope="col">보낸 시간</th><th scope="col">수신자 목록</th><th scope="col"> " " </th>
+          </tr>
+      </thead>
+      <tbody>
+          
  {% for mlist in result %}
-  {% for ml in mlist %}
+ {% for ml in mlist %}
 <tr><td>{{ml.state}}</td>
+ <td><a href="detailMsg?variable={{ml.id}}">{{ml.msgTitle}}</a></td>
+ <td>{{ml.sendedTime}}</td><td>{{ml.election_title}}</td>
 
-
-
-
-  <td><a href="detailMsg?variable={{ml.id}}">{{ml.msgTitle}}</a></td>
-
-
-
-  <td>{{ml.sendedTime}}</td><td>{{ml.election_title}}</td>
-
-   {% endfor %}
- {% endfor %}
+  {% endfor %}
+{% endfor %}
       </tbody>
   </table>
 </div>

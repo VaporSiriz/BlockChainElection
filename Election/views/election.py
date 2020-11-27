@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, make_response, redirect, request
 from flask.helpers import url_for
 from models import *
-from .forms import AddElectionForm, ManageElectionForm, ModifyElectionForm
+#from .forms import AddElectionForm, ManageElectionForm, ModifyElectionForm
 from datetime import datetime, time, timedelta
 
 election_page = Blueprint('election_page', __name__, template_folder='templates', static_folder='static')

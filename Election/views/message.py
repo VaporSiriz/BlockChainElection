@@ -3,17 +3,20 @@ from flask import Blueprint, render_template, make_response, flash, request, red
 from flask_login import login_user, logout_user
 from .forms import UserLoginForm
 from models import Account
+# 
 from models import Msg,UserMessageBox,Election,AdminMessageBox
-
-
-from models import db, db_add, db_flush
+from login_manager import AccountRoles
+from models import db, db_commit, db_add,db_flush
+from flask_login import login_user, login_required, current_user
 import datetime
 
 message_page = Blueprint('message_page', __name__, template_folder='templates', static_folder='static')
 
+#@permission_admin.require(http_exception=403)
 @message_page.route('/msglist')
 def msglist():
-    admin_id='admin1'#세션에서 얻어오기
+    admin_id=current_user.id#세션에서 얻어오기...가 아니네..?
+    
     isadmin=AdminMessageBox.query.filter_by(admin_id=admin_id).all()
     electionid=[]
     for i in isadmin:
@@ -27,6 +30,7 @@ def msglist():
         for a in r:
             result.append(a)
     l=len(result)
+    return str(admin_id)
     return render_template('views/message/managerMsglist.html',data=result,l=l)
    
 
@@ -38,7 +42,7 @@ def detailMsg():
     return render_template('views/message/detailMsg.html',ml=msg)
 
 
-
+#@permission_user.require(http_exception=403)
 @message_page.route('/userMsgList',methods=['GET'])
 def userMsgList():
     userid=request.args.get('eid',1)
@@ -52,7 +56,7 @@ def userMsgList():
         l+=len(msg)
     return render_template('views/message/UserMsglist.html',l=l,result=result)
 
-
+#@permission_admin.require(http_exception=403)
 @message_page.route('/writeMsg')
 def writeMsg():
     admin_id='admin1'#세션에서 얻어오기
@@ -62,6 +66,7 @@ def writeMsg():
         data.append(i.election_id)
     return render_template('views/message/writeMsg.html',data=data)
 
+#@permission_admin.require(http_exception=403)
 @message_page.route('/addMsg',methods=['POST'])
 def addMsg():
     a=Msg()
@@ -86,6 +91,7 @@ def addMsg():
     return msglist()
     #return render_template('views/message/managerMsglist.html',data=data,l=l)
 
+#@permission_admin.require(http_exception=403)
 @message_page.route('/sendMsg',methods=['POST'])
 def sendMsg():
 
@@ -122,7 +128,7 @@ def sendMsg():
     #return render_template('views/message/managerMsglist.html',data=data,l=l)
 
 
-
+#@permission_admin.require(http_exception=403)
 @message_page.route('/delMsg' ,methods=['POST'])
 def delMsg():
     msgid=request.form['msgId']
@@ -133,6 +139,8 @@ def delMsg():
     return msglist()
    # return render_template('views/message/managerMsglist.html',data=data,l=l)
 
+
+#permission_admin.require(http_exception=403)
 @message_page.route('/receiverList' ,methods=['GET'])
 def receiverList():
     
@@ -161,6 +169,12 @@ def createRoom():
 def crdbAll():
         db.create_all()
         return "2"
+@message_page.route('/addadmin')
+def addadmin():
+        account = Account("admin1", "admin1", AccountRoles.Admin.value)
+        db_add(account)
+        db_commit()
+        return "admin 추가"
 
 @message_page.route('/createDb')
 def crdb():
