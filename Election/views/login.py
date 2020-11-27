@@ -46,14 +46,11 @@ def login():
         user = db.session.query(Account).filter(Account.username==username).first()#type: Account
         print(user)
         if user is not None and user.check_password(password):
-            print(u"성공")
-            # Login and validate the user.
-            # user should be an instance of your `User` class
+            print(u"로그인 성공")
+
             login_user(user)
-            identity = Identity(user.id)
-            identity_changed.send(current_app._get_current_object(), identity=identity)
-            #if not is_safe_url(next):
-            #    return flask.abort(400)
+            identity_changed.send(current_app._get_current_object(), identity=Identity(user.id))
+
 
             return '', 200
             #return redirect(next or url_for('index_page.status'))
@@ -65,6 +62,5 @@ def login():
 def logout():
     logout_user()
     session.clear()
-    identity_changed.send(current_app._get_current_object(),
-                          identity=AnonymousIdentity())
+    identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
     return redirect(url_for('index_page.index'))

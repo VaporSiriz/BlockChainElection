@@ -7,10 +7,11 @@ from models import Account
 from models import db
 
 login_manager = LoginManager()
+principals = None
 
-def init_app(app):
+def init_login_manager(app, principals):
     login_manager.init_app(app)
-
+    principals = principals
     login_manager.login_view = 'login_page.status'
     login_manager.login_message = u"Login 성공"
 
@@ -32,10 +33,10 @@ class AccountRoles(Enum):
 role_admin = RoleNeed(AccountRoles.Admin)
 role_user = RoleNeed(AccountRoles.User)
 
-role_list = [role_user, role_admin]
+role_list = [role_admin, role_user]
 
 #Permissions
 permission_admin = Permission(role_admin)
 permission_user = Permission(role_user)
 
-permission_list = [permission_user, permission_admin]
+permission_list = [permission_admin, permission_user]

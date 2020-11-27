@@ -3,10 +3,12 @@ from datetime import datetime
 from flask import Flask, render_template
 from views import login, vote, index, election, message, register
 from models import db, db_commit, db_end
-from login_manager import login_manager
+from login_manager import login_manager, principals
 from flask_util_js import FlaskUtilJs
 from flask_login import current_user
+from login_manager import init_login_manager
 from login_manager import AccountRoles
+from flask_principal import Principal
 from blockchain_manager import BlockChainManager
 import debugpy
 import default_config
@@ -30,7 +32,7 @@ def init_app():
 
     FlaskUtilJs(app)
     db.init_app(app)
-    login_manager.init_app(app)
+    init_login_manager(app, Principal(app, skip_static=True))
 
     # BlockChainManager is Singleton Object
     BlockChainManager.instance().init_app(app)
