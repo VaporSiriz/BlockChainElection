@@ -15,9 +15,9 @@ message_page = Blueprint('message_page', __name__, template_folder='templates', 
 #@permission_admin.require(http_exception=403)
 @message_page.route('/msglist')
 def msglist():
-    admin_id=current_user.id#세션에서 얻어오기...가 아니네..?
-    
-    isadmin=AdminMessageBox.query.filter_by(admin_id=admin_id).all()
+   # admin_id=#세션에서 얻어오기...가 아니네..?
+    #return str(admin_id)
+    isadmin=AdminMessageBox.query.filter_by(admin_id=current_user.id).all()
     electionid=[]
     for i in isadmin:
         electionid.append(i.election_id)
@@ -30,7 +30,7 @@ def msglist():
         for a in r:
             result.append(a)
     l=len(result)
-    return str(admin_id)
+
     return render_template('views/message/managerMsglist.html',data=result,l=l)
    
 
@@ -43,11 +43,11 @@ def detailMsg():
 
 
 #@permission_user.require(http_exception=403)
-@message_page.route('/userMsgList',methods=['GET'])
+@message_page.route('/userMsgList')
 def userMsgList():
-    userid=request.args.get('eid',1)
+    #userid=current_user.id
   
-    data=UserMessageBox.query.filter_by(userid=userid).all()
+    data=UserMessageBox.query.filter_by(userid=current_user.id).all()
     result=[]
     l=0
     for i in data:
@@ -59,7 +59,7 @@ def userMsgList():
 #@permission_admin.require(http_exception=403)
 @message_page.route('/writeMsg')
 def writeMsg():
-    admin_id='admin1'#세션에서 얻어오기
+    admin_id=current_user.id#세션에서 얻어오기
     isadmin=AdminMessageBox.query.filter_by(admin_id=admin_id).all()
     data=[]
     for i in isadmin:
@@ -80,7 +80,10 @@ def addMsg():
     a.election_id=request.form['selected']
     a.msgTitle=request.form['title']
     a.msgContent=request.form['content']
-    a.election_title='title'+request.form['selected']
+    eTitle=Election.query.filter_by(id=a.election_id).first().title
+
+
+    a.election_title=eTitle
     #Election.query.filter_by(id=a.election_id).first().title
     #models.db_add(a)
 
@@ -121,7 +124,7 @@ def sendMsg():
 
     msg.state=1
     db.session.commit()
-    db.session.remove()
+   # db.session.remove()
 
 
     return msglist()
@@ -148,10 +151,10 @@ def receiverList():
     rlist = UserMessageBox.query.filter_by(election_id=eid).all()
 
     userlist=[]
-    l=len(userlist)
+    
     for i in rlist:
         userlist.append(Account.query.filter_by(id=i.userid).first())
-        
+    l=len(userlist)
     return render_template('views/message/receiverList.html',data=userlist,l=l)
 
 

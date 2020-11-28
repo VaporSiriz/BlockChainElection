@@ -17,8 +17,8 @@
   			</tr>
           <tr class="bg-dark" style="color: white">
 
-              <th scope="col">상태</th>	<th scope="col">메시지 제목</th>	<th scope="col">메시지 내용</th>	
-              <th scope="col">작성 시간</th><th scope="col">보낸 시간</th><th scope="col">수신자 목록</th><th scope="col"> " " </th>
+              <th scope="col">상태</th>	<th scope="col">메시지 제목</th>	
+              <th scope="col">작성 시간</th><th scope="col">보낸 시간</th><th scope="col">수신자 목록</th><th scope="col"><br/></th><th scope="col"><br/></th>
           </tr>
       </thead>
       <tbody>
@@ -26,12 +26,14 @@
 {% for ml in data %}
           <tr>
 
-              <td><a href="detailMsg?variable={{ml.id}}">{{ml.msgTitle}}</a></td><td>{{ml.msgContent}}</td><td>{{ml.wroteTime}}</td>
-              <td>{{ml.sendedTime}}</td><td><a href="receiverList?eid={{ml.election_id}}">{{ml.election_title}} 선거방</a></td>
-              <td>뭐더라..</td>
+
               
   
           {% if ml.state == 0 %}
+
+          <td>unsended</td><td><a href="detailMsg?variable={{ml.id}}">{{ml.msgTitle}}</a></td><td>{{ml.wroteTime}}</td>
+          <td>{{ml.sendedTime}}</td><td><a href="receiverList?eid={{ml.election_id}}">{{ml.election_title}} 선거방</a></td>
+      
           <td><form action="sendMsg" method="post"><input type="submit" onclick="alert('되돌리려면 관리자에게 문의하세요')" value="보내기"/>
             <input type="hidden" name="msgId" value={{ml.id}}/>
             <input type="hidden" name="election_id" value={{ml.election_id}}/></form>
@@ -42,6 +44,9 @@
               <input type="hidden" name="msgId" value={{ml.id}}/></form>
             </td>
         {% else %}
+        <td>sended</td><td><a href="detailMsg?variable={{ml.id}}">{{ml.msgTitle}}</a></td><td>{{ml.wroteTime}}</td>
+        <td>{{ml.sendedTime}}</td><td><a href="receiverList?eid={{ml.election_id}}">{{ml.election_title}} 선거방</a></td>
+    
           <td><form action="delMsg" method="post"><input type="submit" value="삭제하기" onclick="alert('삭제 합니다. 되돌리려면 관리자에게 문의하세요')"/>
             <input type="hidden" name="msgId" value={{ml.id}}/></form></td>
         {% endif %}

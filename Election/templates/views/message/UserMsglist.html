@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="container mt-5" style="text-align: center">
-  <h1 style="text-align: left;">등록된 선거</h1>
+  <h1 style="text-align: left;">받은 메시지</h1>
   <table class="table table-bordered table-sm mt-3">
       <thead>
         <tr>
@@ -13,15 +13,14 @@
   			</tr>
           <tr class="bg-dark" style="color: white">
 
-              <th scope="col">상태</th>	<th scope="col">메시지 제목</th>	<th scope="col">메시지 내용</th>	
-              <th scope="col">작성 시간</th><th scope="col">보낸 시간</th><th scope="col">수신자 목록</th><th scope="col"> " " </th>
-          </tr>
+              	<th scope="col">메시지 제목</th>	<th scope="col">받은 시간</th>	
+              <th scope="col">보낸 선거방</th>  </tr>
       </thead>
       <tbody>
           
  {% for mlist in result %}
  {% for ml in mlist %}
-<tr><td>{{ml.state}}</td>
+<tr>
  <td><a href="detailMsg?variable={{ml.id}}">{{ml.msgTitle}}</a></td>
  <td>{{ml.sendedTime}}</td><td>{{ml.election_title}}</td>
 

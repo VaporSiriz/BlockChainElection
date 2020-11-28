@@ -19,7 +19,7 @@
 }
 
 </style>
-<div class="diva" style="align-content: center;">
+<!-- <div class="diva" style="align-content: center;">
   <div id="area">
     <form action="addMsg" method="post">
       제목 : <input type="text"  name="title" placeholder="title"/>
@@ -37,5 +37,43 @@
         <input type="submit" value="추가하기"/>
     </form>
   </div>
+</div> -->
+
+
+
+
+
+
+
+
+
+<div class="container mt-5" style="text-align: center">
+  <h1 style="text-align: left;">메시지 작성</h1>
+
+  <table class="table table-bordered table-sm mt-3">
+      <thead>
+          <tr class="bg-dark" style="color: white">
+
+          	<th scope="col">메시지 제목</th>	   <th scope="col">수신자 목록</th><th scope="col">메시지 내용</th>	<th><br/></th>
+          
+          </tr>
+      </thead>
+      <tbody>
+        <form action="addMsg" method="post">
+<tr><td><input type="text"  name="title" placeholder="title"/></td>
+  <td> <select id="dropbt" name="selected">
+    {% for ml in data %}
+    <option value={{ml}}>{{ml}}</a>
+    {% endfor %}
+</select></td>
+<td> <textarea name="content" cols="80%" rows="10" placeholder="메시지 작성"></textarea></td>
+<td>  <input type="submit" value="추가하기"/></td>
+</tr>
+</form>
+      </tbody>
+  </table>
+
+
 </div>
+
 {% endblock %}
