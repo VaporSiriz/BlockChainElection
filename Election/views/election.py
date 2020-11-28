@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from login_manager import *
 from flask_login import login_user, login_required, current_user
 import csv
-import io
+from datetime import datetime
 election_page = Blueprint('election_page', __name__, template_folder='templates', static_folder='static')
 
 @election_page.route('/')
@@ -18,40 +18,38 @@ def index():
 @election_page.route('/add', methods=['GET', 'POST'])
 def addElection():
     form = AddElectionForm(request.form)
+    print("form['startat'].data : ", form['startat'].data)
+    print("form['endat'].data : ", form['endat'].data)
     if form.validate():
-        election = Election()
-        election.title = form['title'].data
-        election.desc = form['desc'].data
-        election.create_date = datetime.now()
-        election.state = 0
-        election.startat = form['startat'].data
-        election.endat = form['endat'].data
-
+        if form['startat'].data >= form['endat'].data:
+            return '', 400
+        election = Election(form['title'].data, form['desc'].data, form['startat'].data, form['endat'].data)
         db.session.add(election)
-        db.session.commit()
-        adminbox=AdminMessageBox()
+        db.session.flush()
+        #adminbox=AdminMessageBox()
 
-        el =Election.query.filter_by(title=form['title'].data).filter_by(desc=form['desc'].data).filter_by(state=0).filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
+        #el = Election.query.filter_by(title=form['title'].data).filter_by(desc=form['desc'].data).filter_by().filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
         #.filter_by(create_date=datetime.now()).filter_by(state=0).filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
 
-        adminbox.election_id=el.id
-        adminbox.admin_id=current_user.id
-        db.session.add(adminbox)
-        db.session.commit()
+        #adminbox.election_id=el.id
+        #adminbox.admin_id=current_user.id
+        #db.session.add(adminbox)
+        #db.session.commit()
 
 
         return redirect(url_for('election_page.manageElection'))
     return render_template('views/election/add.html', form=form)
 
 @permission_admin.require(http_exception=403)
-@election_page.route('/manage', methods=['GET', 'POST'])
+@election_page.route('/manage', methods=['GET'])
 def manageElection():
     form = ManageElectionForm()
     add_election_voter_form = AddElectionVoterForm()
     now = datetime.now() + timedelta(hours=9)
     elections = Election.query.all()
     for election in elections:
-        add_election_voter_form.election.choices.append((election.id, election.title))
+        if election.endat < datetime.now():
+            add_election_voter_form.election.choices.append((election.id, election.title))
 
     if form.validate():
         if request.args.get('startbtn') != None:
@@ -69,14 +67,14 @@ def manageElection():
             db.session.commit()
             return redirect(url_for('election_page.manageElection'))
 
-    for i in elections:
-        if i.endat >= now:   # 종료시간이 지나지 않으면(진행(1) or 대기(0))
-            if (i.startat < now) and (i.state == 0):
-                i.state = 1
-        else:   # 종료시간이 지나면(종료(-1))
-            if i.state != -1:
-                i.state = -1
-    db.session.commit()
+    # for i in elections:
+    #     if i.endat >= now:   # 종료시간이 지나지 않으면(진행(1) or 대기(0))
+    #         if (i.startat < now) and (i.state == 0):
+    #             i.state = 1
+    #     else:   # 종료시간이 지나면(종료(-1))
+    #         if i.state != -1:
+    #             i.state = -1
+    # db.session.commit()
         
     page = request.args.get('page', type=int, default=1)
     res_list = Election.query.filter(Election.endat >= now).order_by(Election.create_date.asc())
@@ -88,6 +86,21 @@ def manageElection():
 
     return render_template('views/election/manage.html', res_list=res_list, end_list=end_list, form=form,
                             add_election_voter_form=add_election_voter_form)
+
+@permission_admin.require(http_exception=403)
+@election_page.route('/manage/start/<int:election_id>', methods=['POST'])
+def start_election(election_id):
+    election_id = int(election_id)
+    election = Election.query.filter_by(id=election_id).first()
+    now = datetime.now()
+    if election is not None:
+        if election.startat <= now:
+            return u'이미 시작된 선거입니다.', 400
+        election.startat = datetime.now()
+        db_add(election)
+        db_flush()
+        return '', 200
+    return '', 400
 
 @permission_admin.require(http_exception=403)
 @election_page.route('/modify/<int:id>', methods=['GET', 'POST'])
@@ -113,6 +126,7 @@ def add_voters():
     csv_name = add_election_voter_form.csv_file.name
     csv_file = request.files[csv_name]
     csv_list = csv_file.read().decode('utf-8').replace('\n', '').split('\r')
+    fail_account_idx = []
     """
         csv파일은
         | id |
@@ -126,19 +140,24 @@ def add_voters():
             continue
         row = row.split(',')
         account_id = row[0]
-        voter = Voters(election_id, account_id)
-        db_add(voter)
-        db_flush()
+        try:
+            voter = Voters(election_id, account_id)
+            db_add(voter)
+            db_flush()
+        except Exception as ex:
+            print('fail')
+            db_rollback()
+            fail_account_idx.append(account_id)
+            continue
 
-    return '', 200
+    return 'failed account idx : {0}'.format(str(fail_account_idx)), 200
     
 
 @permission_admin.require(http_exception=403)
 @election_page.route('/view_voters/<int:election_id>', methods=['GET', 'POST'])
 def view_voters(election_id):
     voters = Voters.query.filter_by(election_id=election_id).all()
-    print(voters)
-
+    
 
     return render_template('views/election/modify.html')
 

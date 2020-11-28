@@ -102,33 +102,34 @@ class Election(db.Model):
         'mysql_engine': 'InnoDB'})
  
     id = db.Column(db.Integer, primary_key=True)
-    state = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(256), nullable=False)
     desc = db.Column(db.String(4196), nullable=False)
     create_date = db.Column(db.DateTime(), nullable=False)
     startat = db.Column(db.DateTime(), nullable=False)
     endat = db.Column(db.DateTime(), nullable=False)
 
-    # def __init__(self, title, desc, create_date):
-    #     self.title = title
-    #     self.desc = desc
-    #     self.create_date = create_date
+    def __init__(self, title, desc, startat, endat):
+        self.title = title
+        self.desc = desc
+        self.create_date = datetime.now()
+        self.startat = startat
+        self.endat = endat
 
-    @staticmethod
-    def get_elections():
-        db.session.query(Election.id, Election.title).all()
+    def is_ended(self):
+        return self.endat >= datetime.now()
+
+    def in_works(self):
+        return self.startat <= datetime.now()
 
 class Voters(db.Model):
     __table_name__ = 'voters'
     __table_args__ = (
-        db.Index('ix_voters_election_id_account_id', 'election_id', 'account_id'),
         {'extend_existing': True,
         'mysql_charset': 'utf8mb4',
         'mysql_engine': 'InnoDB'})
  
-    id = db.Column(db.Integer, primary_key=True)
-    election_id = db.Column(db.Integer, nullable=False)
-    account_id = db.Column(db.Integer, nullable=False)
+    election_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=False)
+    account_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=False)
     is_candidate = db.Column(db.Boolean, nullable=False, default=False)
     create_date = db.Column(db.DateTime, nullable=True)
     update_date = db.Column(db.DateTime, nullable=True)

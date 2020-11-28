@@ -19,7 +19,8 @@ $(function() {
             }
         },
         success: function(data) {
-            alert("성공");
+            console.log(data);
+            alert(data);
             location.reload();
             //location.href = flask_util.url_for('election_page.manageElection');
         },
@@ -30,7 +31,6 @@ $(function() {
     });
 
     $("#lookupvotersbtn").click(function(){
-
 
         if(result){
             $.ajax({
@@ -54,6 +54,59 @@ $(function() {
         }
         else{
             console.log('break false');
+        }
+    });
+
+    $("#startbtn").click(function(){
+        var election_id = $(this).data("election-id");
+        var result = confirm("지금 투표를 시작하시겠습니까?");
+        if(result){
+            $.ajax({
+                type:"POST",
+                url: flask_util.url_for('election_page.start_election', {election_id:election_id})
+            })
+            .done(function(data) {
+                alert('선거가 시작 되었습니다.');
+                location.reload();
+            })
+            .fail(function(data){
+                if(data.status == 403)
+                {
+                    alert("수정권한이 없습니다.");
+                }
+                else {
+                    alert(data.responseText);
+                    console.log(data);
+                }
+            });
+        }
+    });
+
+    $("#endbtn").click(function(){
+        var election_id = $(this).data("election-id");
+        var result = confirm("지금 투표를 시작하시겠습니까?");
+        if(result){
+            $.ajax({
+                type:"POST",
+                url: flask_util.url_for('election_page.start_election', {election_id:election_id})
+            })
+            .done(function(data) {
+                alert('선거가 시작 되었습니다.');
+                location.reload();
+            })
+            .fail(function(data){
+                if(data.status == 403)
+                {
+                    alert("수정권한이 없습니다.");
+                }
+                else {
+                    alert(data.responseText);
+                    console.log(data);
+                }
+            });
+        }
+        else{
+            console.log('cancel!');
         }
     });
 })
