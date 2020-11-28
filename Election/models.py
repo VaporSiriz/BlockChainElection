@@ -6,6 +6,8 @@ from ecdsa import NIST256p, SigningKey
 import base58
 import codecs
 import hashlib
+from datetime import datetime
+from enums import CandidateStatus
 
 db = SQLAlchemy()
 
@@ -31,8 +33,8 @@ class Account(db.Model, UserMixin):
     __table_name__ = 'account'
     __table_args__ = (
         {'extend_existing': True,
-            'mysql_charset': 'utf8mb4',
-            'mysql_engine': 'InnoDB'})
+        'mysql_charset': 'utf8mb4',
+        'mysql_engine': 'InnoDB'})
  
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
@@ -96,8 +98,8 @@ class Election(db.Model):
     __table_name__ = 'election'
     __table_args__ = (
         {'extend_existing': True,
-            'mysql_charset': 'utf8mb4',
-            'mysql_engine': 'InnoDB'})
+        'mysql_charset': 'utf8mb4',
+        'mysql_engine': 'InnoDB'})
  
     id = db.Column(db.Integer, primary_key=True)
     state = db.Column(db.Integer, nullable=False)
@@ -112,15 +114,60 @@ class Election(db.Model):
     #     self.desc = desc
     #     self.create_date = create_date
 
+    @staticmethod
+    def get_elections():
+        db.session.query(Election.id, Election.title).all()
+
+class Voters(db.Model):
+    __table_name__ = 'voters'
+    __table_args__ = (
+        db.Index('ix_voters_election_id_account_id', 'election_id', 'account_id'),
+        {'extend_existing': True,
+        'mysql_charset': 'utf8mb4',
+        'mysql_engine': 'InnoDB'})
+ 
+    id = db.Column(db.Integer, primary_key=True)
+    election_id = db.Column(db.Integer, nullable=False)
+    account_id = db.Column(db.Integer, nullable=False)
+    is_candidate = db.Column(db.Boolean, nullable=False, default=False)
+    create_date = db.Column(db.DateTime, nullable=True)
+    update_date = db.Column(db.DateTime, nullable=True)
+
+    def __init__(self, election_id, account_id):
+        self.election_id = election_id
+        self.account_id = account_id
+        self.create_date = datetime.now()
+        self.update_date = datetime.now()
+
+    def change_state_candidate(self):
+        self.is_candidate = not self.is_candidate
+
 class Candidate(db.Model):
     __table_name__ = 'candidate'
     __table_args__ = (
+        db.Index('ix_candidate_election_id_account_id', 'election_id', 'account_id'),
         {'extend_existing': True,
             'mysql_charset': 'utf8mb4',
             'mysql_engine': 'InnoDB'})
  
     id = db.Column(db.Integer, primary_key=True)
-    
+    election_id = db.Column(db.Integer, nullable=False)
+    account_id = db.Column(db.Integer, nullable=False)
+    state = db.Column(db.Integer, nullable=False, server_default='0', doc='0:대기,1:취소,2:거절,3:승인')
+    create_date = db.Column(db.DateTime, nullable=True)
+    update_date = db.Column(db.DateTime, nullable=True)
+
+    def __init__(self, election_id, account_id):
+        self.election_id = election_id
+        self.account_id = account_id
+        self.state = CandidateStatus.WAITING
+        self.create_date = datetime.now()
+        self.update_date = datetime.now()
+
+    def change_status(self, state):
+        self.state = state
+        if self.state < CandidateStatus.APPROVE:
+            voter = Voters.query.filter(Voters.update_date)
 
 
     # def __init__(self, title, desc):

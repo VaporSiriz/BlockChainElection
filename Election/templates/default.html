@@ -11,8 +11,8 @@
         <title>BlockChain Election</title>
 
         <!-- Bootstrap Core CSS -->
+        <!--<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">-->
         <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
-
         <!-- Custom CSS -->
         <link href="{{ url_for('static', filename='css/default.css') }}" rel="stylesheet" type="text/css">
         <!-- Morris Charts CSS -->
@@ -27,71 +27,62 @@
     <body>
         <div id="wrapper">
 
-            <!-- Navigation -->
-            <nav class="navbar navbar-expand-sm navbar-dark bg-dark py-1">
-                <div class="container">
-                  <a class="navbar-brand" href="/">한표</a>
+          <!-- Navigation -->
+          <nav class="navbar navbar-expand-sm navbar-dark bg-dark py-1">
+              <div class="container">
+                <a class="navbar-brand" href="/">한표</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
-              
                 <div class="justify-content-end" id="navbarColor02">
                   <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
 
-                      
                       {% if current_user.is_authenticated %}
                       {% if is_admin_account() %}
-                      <a class="nav-link" href="/message/msglist">메시지함</a>
-                      {%else %}
-                      <a class="nav-link" href="message/userMsgList">메시지함</a>
+                      <a class="nav-link" href="{{ url_for('message_page.msglist') }}">메시지함</a>
+                      {% else %}
+                      <a class="nav-link" href="{{ url_for('message_page.userMsgList') }}">메시지함</a>
                       {% endif %}
                       {% endif %}
                     </li>
                     {% if is_admin_account() %}
                     <li class="nav-item">
-                      <a class="nav-link" href="#">투표생성</a>
+                      <a class="nav-link" href="{{ url_for('election_page.manageElection') }}">선거관리</a>
                     </li>
                     {% endif %}
                     {% if current_user.is_authenticated %}
                     <li class="nav-item">
-                      <a class="nav-link" href="/login/logout">로그아웃</a>
+                      <a class="nav-link" href="{{ url_for('login_page.logout') }}">로그아웃</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                      <a class="nav-link" href="/login">로그인</a>
+                      <a class="nav-link" href="{{ url_for('login_page.index') }}">로그인</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="/register">회원가입</a>
+                      <a class="nav-link" href="{{ url_for('register_page.index') }}">회원가입</a>
                     </li>
                     {% endif %}
                   </ul>
                 </div>
-                  <!--
-                  <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                  </form>
-                  -->
-                </div>
-              </nav>
-
-            <div id="page-wrapper">
-                <div class="container-fluid">
-                    {% block content %}{% endblock %}
-                </div>
-            </div>
-            <!-- /#page-wrapper -->
-
+              </div>
+            </nav>
+          <div id="page-wrapper">
+              <div class="container-fluid">
+                  {% block content %}{% endblock %}
+              </div>
+          </div>
+          <!-- /#page-wrapper -->
         </div>
         {% block modals %}{% endblock %}
         {{ flask_util_js.js }}
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn" crossorigin="anonymous"></script>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
         <!-- Bootstrap Core JavaScript -->
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <!-- Morris Charts JavaScript -->
 
         <!-- developer's JavaScript -->

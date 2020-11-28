@@ -18,4 +18,4 @@ def index():
 
     print("current_user : ", current_user)
 
-    return render_template('views/index/index.html')
+    return redirect(url_for('election_page.index'))#render_template('views/index/index.html')

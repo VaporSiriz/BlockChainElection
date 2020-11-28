@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, make_response, redirect, request
 from flask.helpers import url_for
 from models import *
-from .forms import AddElectionForm, ManageElectionForm, ModifyElectionForm
+from .forms import AddElectionForm, ManageElectionForm, ModifyElectionForm, AddElectionVoterForm
 from datetime import datetime, timedelta
 from login_manager import *
 from flask_login import login_user, login_required, current_user
+import csv
+import io
 election_page = Blueprint('election_page', __name__, template_folder='templates', static_folder='static')
 
 @election_page.route('/')
@@ -38,15 +40,18 @@ def addElection():
         db.session.commit()
 
 
-        return redirect('/')
+        return redirect(url_for('election_page.manageElection'))
     return render_template('views/election/add.html', form=form)
 
 @permission_admin.require(http_exception=403)
 @election_page.route('/manage', methods=['GET', 'POST'])
 def manageElection():
     form = ManageElectionForm()
+    add_election_voter_form = AddElectionVoterForm()
     now = datetime.now() + timedelta(hours=9)
     elections = Election.query.all()
+    for election in elections:
+        add_election_voter_form.election.choices.append((election.id, election.title))
 
     if form.validate():
         if request.args.get('startbtn') != None:
@@ -81,7 +86,8 @@ def manageElection():
     end_list = Election.query.filter(Election.endat < now).order_by(Election.create_date.asc())
     end_list = end_list.paginate(page2, per_page=4)
 
-    return render_template('views/election/manage.html', res_list=res_list, end_list=end_list, form=form)
+    return render_template('views/election/manage.html', res_list=res_list, end_list=end_list, form=form,
+                            add_election_voter_form=add_election_voter_form)
 
 @permission_admin.require(http_exception=403)
 @election_page.route('/modify/<int:id>', methods=['GET', 'POST'])
@@ -98,3 +104,41 @@ def modifyElection(id):
 
         return redirect(url_for('election_page.manageElection'))
     return render_template('views/election/modify.html', form=form, data=data)
+
+@permission_admin.require(http_exception=403)
+@election_page.route('/add_voters', methods=['GET', 'POST'])
+def add_voters():
+    election_id = int(request.form['election'])
+    add_election_voter_form = AddElectionVoterForm(request.form)
+    csv_name = add_election_voter_form.csv_file.name
+    csv_file = request.files[csv_name]
+    csv_list = csv_file.read().decode('utf-8').replace('\n', '').split('\r')
+    """
+        csv파일은
+        | id |
+        | 1  |
+        | 2  |
+        와 같은 형식을 따를 것.
+        
+    """
+    for n, row in enumerate(csv_list):
+        if n == 0:
+            continue
+        row = row.split(',')
+        account_id = row[0]
+        voter = Voters(election_id, account_id)
+        db_add(voter)
+        db_flush()
+
+    return '', 200
+    
+
+@permission_admin.require(http_exception=403)
+@election_page.route('/view_voters/<int:election_id>', methods=['GET', 'POST'])
+def view_voters(election_id):
+    voters = Voters.query.filter(Voters.election_id=election_id).all()
+    print(voters)
+
+
+     return render_template('views/election/modify.html', form=form, data=data)
+
