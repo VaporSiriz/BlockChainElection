@@ -39,7 +39,7 @@ class Account(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.Integer, nullable=False, default=1, server_default='0', doc='0:ADMIN,1:VOTER')
+    role = db.Column(db.Integer, nullable=False, default=1, server_default='0', doc='0:ADMIN,1:USER')
     _private_key = db.Column(db.String(256), nullable=False, doc="블록체인 address를 생성하기 위한 private_key")
     _public_key = db.Column(db.String(256), nullable=False, doc="블록체인 address를 생성하기 위한 public_key")
     _blockchain_address = db.Column(db.String(256), nullable=False, doc="블록 체인을 이용하기 위한 address")
@@ -142,6 +142,13 @@ class Voters(db.Model):
 
     def change_state_candidate(self):
         self.is_candidate = not self.is_candidate
+
+    @property
+    def username(self):
+        acc = Account.query.filter_by(id=self.account_id).first()
+        if acc is not None:
+            return acc.username
+        return None
 
 class Candidate(db.Model):
     __table_name__ = 'candidate'

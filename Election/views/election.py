@@ -50,31 +50,6 @@ def manageElection():
     for election in elections:
         if election.endat < datetime.now():
             add_election_voter_form.election.choices.append((election.id, election.title))
-
-    if form.validate():
-        if request.args.get('startbtn') != None:
-            election = Election.query.get(request.args.get('startbtn'))
-            election.startat = now + timedelta(seconds=-1)
-            db.session.commit()
-            return redirect(url_for('election_page.manageElection'))
-        elif request.args.get('endbtn') != None:
-            election = Election.query.get(request.args.get('endbtn'))
-            election.endat = now + timedelta(seconds=-1)
-            db.session.commit()
-        elif request.args.get('delbtn') != None:
-            election = Election.query.get(request.args.get('delbtn'))
-            db.session.delete(election)
-            db.session.commit()
-            return redirect(url_for('election_page.manageElection'))
-
-    # for i in elections:
-    #     if i.endat >= now:   # 종료시간이 지나지 않으면(진행(1) or 대기(0))
-    #         if (i.startat < now) and (i.state == 0):
-    #             i.state = 1
-    #     else:   # 종료시간이 지나면(종료(-1))
-    #         if i.state != -1:
-    #             i.state = -1
-    # db.session.commit()
         
     page = request.args.get('page', type=int, default=1)
     res_list = Election.query.filter(Election.endat >= now).order_by(Election.create_date.asc())
@@ -166,13 +141,12 @@ def add_voters():
             continue
 
     return 'failed account idx : {0}'.format(str(fail_account_idx)), 200
-    
 
 @permission_admin.require(http_exception=403)
 @election_page.route('/view_voters/<int:election_id>', methods=['GET', 'POST'])
 def view_voters(election_id):
-    voters = Voters.query.filter_by(election_id=election_id).all()
+    page = request.args.get('page', type=int, default=1)
+    voters = Voters.query.filter_by(election_id=election_id).paginate(page, per_page=5)
     
-
-    return render_template('views/election/voters.html')
+    return render_template('views/election/voters.html', voters=voters)
 

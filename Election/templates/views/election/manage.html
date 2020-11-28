@@ -14,6 +14,7 @@
         <thead>
             <tr class="bg-dark" style="color: white">
                 <th scope="col">상태</th>
+                <th scope="col">선거 ID</th>
                 <th scope="col">선거 이름</th>
                 <th scope="col">선거 내용</th>
                 <th scope="col">시작 시간</th>
@@ -29,6 +30,7 @@
                 {% else %}
                 <td>진행</td>
                 {% endif %}
+                <td>{{ data.id }}</td>
                 <td>{{ data.title }}</td>
                 <td>{{ data.desc }}</td>
                 <td>{{ data.startat }}</td>
@@ -112,6 +114,8 @@
                 <td>
                     <form>
                         <button type="submit" class="btn btn-dark btn-sm" id="delbtn" name="delbtn" value="{{ data.id }}">삭제</button>
+                        <button type="button" class="btn btn-dark btn-sm" id="lookupvotersbtn" name="lookupvotersbtn" 
+                            onclick=location.href="{{ url_for('election_page.view_voters', election_id=data.id) }}">투표자 조회</button>
                     </form>
                 </td>
             </tr>
