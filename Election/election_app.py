@@ -37,7 +37,6 @@ def init_app():
     # BlockChainManager is Singleton Object
     BlockChainManager.instance().init_app(app)
     BlockChainManager.instance().load_blockchain_server()
-
     return app
 
 
@@ -58,7 +57,6 @@ def is_user_account():
 
 def is_admin_account():
     return get_user_role() == AccountRoles.Admin.value
-
 
 JINJA_GLOBAL_FUNCTIONS = {
     'is_user_account': is_user_account,

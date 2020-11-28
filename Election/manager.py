@@ -3,12 +3,12 @@ from flask_migrate import Migrate, MigrateCommand
 from default_config import SQLALCHEMY_DATABASE_URI
 from models import Account, Election
 from models import db, db_commit, db_add
-import election
+import election_app
 from datetime import datetime, timedelta
 from login_manager import AccountRoles
 
 def configure_app():
-    app = election.init_app()
+    app = election_app.init_app()
     return app
 
 app = configure_app()
