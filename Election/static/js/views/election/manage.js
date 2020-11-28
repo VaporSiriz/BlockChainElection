@@ -91,7 +91,7 @@ $(function() {
                 url: flask_util.url_for('election_page.end_election', {election_id:election_id})
             })
             .done(function(data) {
-                alert('선거가 시작 되었습니다.');
+                alert('선거가 종료 되었습니다.');
                 location.reload();
             })
             .fail(function(data){

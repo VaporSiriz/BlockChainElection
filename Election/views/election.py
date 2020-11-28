@@ -84,7 +84,7 @@ def end_election(election_id):
     election = Election.query.filter_by(id=election_id).first()
     now = datetime.now()
     if election is not None:
-        if now <= election.endat:
+        if election.endat <= now:
             return u'이미 종료된 선거입니다.', 400
         election.endat = datetime.now()
         db_add(election)
