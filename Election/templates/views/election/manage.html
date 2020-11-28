@@ -40,7 +40,7 @@
                     {% endif %}
                     <button type="button" class="btn btn-dark btn-sm" id="endbtn" name="endbtn" value="{{ data.id }}">종료</button>
                     <button type="button" class="btn btn-dark btn-sm" id="lookupvotersbtn" name="lookupvotersbtn" 
-                            data-election-id="{{ data.id }}" onclick=location.href="{{ url_for('election_page.addElection') }}">투표자 조회</button>
+                            onclick=location.href="{{ url_for('election_page.view_voters', election_id=data.id) }}">투표자 조회</button>
 
                 </td>
             </tr>

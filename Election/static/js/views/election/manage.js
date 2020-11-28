@@ -84,11 +84,11 @@ $(function() {
 
     $("#endbtn").click(function(){
         var election_id = $(this).data("election-id");
-        var result = confirm("지금 투표를 시작하시겠습니까?");
+        var result = confirm("지금 투표를 종료하시겠습니까?");
         if(result){
             $.ajax({
                 type:"POST",
-                url: flask_util.url_for('election_page.start_election', {election_id:election_id})
+                url: flask_util.url_for('election_page.end_election', {election_id:election_id})
             })
             .done(function(data) {
                 alert('선거가 시작 되었습니다.');

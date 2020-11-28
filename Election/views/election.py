@@ -88,7 +88,7 @@ def manageElection():
                             add_election_voter_form=add_election_voter_form)
 
 @permission_admin.require(http_exception=403)
-@election_page.route('/manage/start/<int:election_id>', methods=['POST'])
+@election_page.route('/manage/start_election/<int:election_id>', methods=['POST'])
 def start_election(election_id):
     election_id = int(election_id)
     election = Election.query.filter_by(id=election_id).first()
@@ -97,6 +97,21 @@ def start_election(election_id):
         if election.startat <= now:
             return u'이미 시작된 선거입니다.', 400
         election.startat = datetime.now()
+        db_add(election)
+        db_flush()
+        return '', 200
+    return '', 400
+
+@permission_admin.require(http_exception=403)
+@election_page.route('/manage/end_election/<int:election_id>', methods=['POST'])
+def end_election(election_id):
+    election_id = int(election_id)
+    election = Election.query.filter_by(id=election_id).first()
+    now = datetime.now()
+    if election is not None:
+        if now <= election.endat:
+            return u'이미 종료된 선거입니다.', 400
+        election.endat = datetime.now()
         db_add(election)
         db_flush()
         return '', 200
@@ -159,5 +174,5 @@ def view_voters(election_id):
     voters = Voters.query.filter_by(election_id=election_id).all()
     
 
-    return render_template('views/election/modify.html')
+    return render_template('views/election/voters.html')
 
