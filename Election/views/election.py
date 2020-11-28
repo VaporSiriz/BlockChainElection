@@ -136,9 +136,9 @@ def add_voters():
 @permission_admin.require(http_exception=403)
 @election_page.route('/view_voters/<int:election_id>', methods=['GET', 'POST'])
 def view_voters(election_id):
-    voters = Voters.query.filter(Voters.election_id=election_id).all()
+    voters = Voters.query.filter_by(election_id=election_id).all()
     print(voters)
 
 
-     return render_template('views/election/modify.html', form=form, data=data)
+    return render_template('views/election/modify.html')
 
