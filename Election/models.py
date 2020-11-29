@@ -48,24 +48,25 @@ class Account(db.Model, UserMixin):
         self.username = username
         self.password = generate_password_hash(str(password))
         self.role = role
-        self._private_key = SigningKey.generate(curve=NIST256p)
-        self._public_key = self._private_key.get_verifying_key()
-        self._blockchain_address = self.generate_blockchain_address()
+        signing_key = SigningKey.generate(curve=NIST256p)
+        self._private_key = signing_key.to_string().hex()
+        self._public_key = signing_key.get_verifying_key().to_string().hex()
+        self._blockchain_address = self.generate_blockchain_address(signing_key)
 
     @property
     def private_key(self):
-        return self._private_key.to_string().hex()
+        return self._private_key
 
     @property
     def public_key(self):
-        return self._public_key.to_string().hex()
+        return self._public_key
 
     @property
     def blockchain_address(self):
         return self._blockchain_address
 
-    def generate_blockchain_address(self):
-        public_key_bytes = self._public_key.to_string()
+    def generate_blockchain_address(self, signing_key):
+        public_key_bytes = signing_key.to_string()
         sha256_bpk = hashlib.sha256(public_key_bytes)
         sha256_bpk_digest = sha256_bpk.digest()
 
@@ -89,10 +90,15 @@ class Account(db.Model, UserMixin):
         address_hex = (network_public_key + checksum).decode('utf-8')
 
         blockchain_address = base58.b58encode(address_hex).decode('utf-8')
+        
         return blockchain_address
 
     def check_password(self, password):
         return check_password_hash(self.password, str(password))
+    
+    @staticmethod
+    def check_account(account_id):
+        return Account.query.filter_by(id=account_id).scalar()
 
 class Election(db.Model):
     __table_name__ = 'election'
