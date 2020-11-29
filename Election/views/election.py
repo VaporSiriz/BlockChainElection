@@ -47,7 +47,7 @@ def manageElection():
     now = datetime.now() + timedelta(hours=9)
     elections = Election.query.all()
     for election in elections:
-        if election.endat < datetime.now():
+        if datetime.now() < election.endat:
             add_election_voter_form.election.choices.append((election.id, election.title))
         
     page = request.args.get('page', type=int, default=1)
