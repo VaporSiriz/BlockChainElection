@@ -128,14 +128,11 @@ def add_voters():
         if n == 0:
             continue
         row = row.split(',')
-
-
         account_id = row[0]
-        if len(account_id)==0:
-            return "ok"
-
-
         try:
+            if Account.check_account(account_id) is None:
+                raise Exception("account_id '{0}' doesn't exist.".format(account_id))
+
             voter = Voters(election_id, account_id)
             db_add(voter)
             
@@ -148,7 +145,7 @@ def add_voters():
             db_add(userbox)
             db_flush()
         except Exception as ex:
-            print('fail')
+            print(ex)
             db_rollback()
             fail_account_idx.append(account_id)
             continue
