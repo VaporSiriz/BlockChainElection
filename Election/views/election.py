@@ -26,15 +26,14 @@ def addElection():
         election = Election(form['title'].data, form['desc'].data, form['startat'].data, form['endat'].data)
         db.session.add(election)
         db.session.flush()
-        #adminbox=AdminMessageBox()
+        adminbox=AdminMessageBox()
 
-        #el = Election.query.filter_by(title=form['title'].data).filter_by(desc=form['desc'].data).filter_by().filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
-        #.filter_by(create_date=datetime.now()).filter_by(state=0).filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
-
-        #adminbox.election_id=el.id
-        #adminbox.admin_id=current_user.id
-        #db.session.add(adminbox)
-        #db.session.commit()
+        el = Election.query.filter_by(title=form['title'].data).filter_by(desc=form['desc'].data).filter_by().filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
+        
+        adminbox.election_id=el.id
+        adminbox.admin_id=current_user.id
+        db.session.add(adminbox)
+        db.session.commit()
 
 
         return redirect(url_for('election_page.manageElection'))
