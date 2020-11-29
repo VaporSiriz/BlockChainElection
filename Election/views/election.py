@@ -125,9 +125,21 @@ def add_voters():
         if n == 0:
             continue
         row = row.split(',')
+        
         account_id = row[0]
         voter = Voters(election_id, account_id)
         db_add(voter)
+        # userbox=UserMessageBox()
+        # userbox.election_id=election_id
+        # userbox.userid=account_id
+        # userbox.msg_id=-1
+        # userbox.state=0
+        
+        # db_add(userbox)
+
+
+
+
         db_flush()
 
     return '', 200
