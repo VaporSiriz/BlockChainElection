@@ -59,7 +59,7 @@ def manageElection():
     end_list = end_list.paginate(page2, per_page=4)
 
     return render_template('views/election/manage.html', res_list=res_list, end_list=end_list, form=form,
-                            add_election_voter_form=add_election_voter_form)
+                            add_election_voter_form=add_election_voter_form, now=now)
 
 @permission_admin.require(http_exception=403)
 @election_page.route('/manage/start_election/<int:election_id>', methods=['POST'])
