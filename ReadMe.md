@@ -6,14 +6,12 @@ $ docker-compose stop
 
 ## migrate 하는 법
 
-### 1. 
-$ python3 manager.py initdb 를 이용하여 첫 db 초기화 
-
+### 1.
+$ python3 manager.py db init 를 이용하여 첫 db 초기화 
 (migration을 하기위한 부분이므로 첫 초기화 떄 1번만 실행)
-
+migrations 디렉토리가 생성된 것을 확인
 이후 아래 명령어를 차례로 실행
-
-### 2. 
+### 2.
 $ python3 manager.py db migrate --message 'migrate msg'
 
 ### 3. 

@@ -1,0 +1,74 @@
+{% extends "default.html" %}
+{% block title %}선거생성{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+
+<div class="container mt-5" style="text-align: center">
+    <h1 style="text-align: left;">투표자 목록</h1>
+    <div style="text-align:right">
+        <button type="submit" class="btn btn-dark btn-sm" id="add_voter_btn" name="add_voter">투표자 추가</button>
+    </div>
+    <table class="table table-bordered table-sm mt-3">
+        <sthead>
+            <tr class="bg-dark" style="color: white">
+                <th scope="col">상태</th>
+                <th scope="col">ID</th>
+                <th scope="col">이름</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for voter in voters.items %}
+            <tr>
+                <td>{% if voter.is_candidate == True %}후보자{% else %}투표자{% endif %}</td>
+                <td>{{ voter.account_id }}</td>
+                <td>{{ voter.username }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <ul class="pagination justify-content-center">
+        <!-- 이전페이지 -->
+        {% if voters.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ voters.prev_num }}">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+        {% for page_num in voters.iter_pages() %}
+        {% if page_num %}
+        {% if page_num != voters.page %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+        </li>
+        {% else %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{ page_num }}</a>
+        </li>
+        {% endif %}
+        {% else %}
+        <li class="disabled">
+            <a class="page-link" href="#">...</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+        <!-- 다음페이지 -->
+        {% if voters.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ voters.next_num }}">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block script %}
+	<script src="{{ url_for('static', filename='js/views/election/manage.js') }}"></script>
+{% endblock %}

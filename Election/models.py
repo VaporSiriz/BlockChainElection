@@ -39,7 +39,7 @@ class Account(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.Integer, nullable=False, default=1, server_default='0', doc='0:ADMIN,1:VOTER')
+    role = db.Column(db.Integer, nullable=False, default=1, server_default='0', doc='0:ADMIN,1:USER')
     _private_key = db.Column(db.String(256), nullable=False, doc="블록체인 address를 생성하기 위한 private_key")
     _public_key = db.Column(db.String(256), nullable=False, doc="블록체인 address를 생성하기 위한 public_key")
     _blockchain_address = db.Column(db.String(256), nullable=False, doc="블록 체인을 이용하기 위한 address")
@@ -102,33 +102,34 @@ class Election(db.Model):
         'mysql_engine': 'InnoDB'})
  
     id = db.Column(db.Integer, primary_key=True)
-    state = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(256), nullable=False)
     desc = db.Column(db.String(4196), nullable=False)
     create_date = db.Column(db.DateTime(), nullable=False)
     startat = db.Column(db.DateTime(), nullable=False)
     endat = db.Column(db.DateTime(), nullable=False)
 
-    # def __init__(self, title, desc, create_date):
-    #     self.title = title
-    #     self.desc = desc
-    #     self.create_date = create_date
+    def __init__(self, title, desc, startat, endat):
+        self.title = title
+        self.desc = desc
+        self.create_date = datetime.now()
+        self.startat = startat
+        self.endat = endat
 
-    @staticmethod
-    def get_elections():
-        db.session.query(Election.id, Election.title).all()
+    def is_ended(self):
+        return self.endat >= datetime.now()
+
+    def in_works(self):
+        return self.startat <= datetime.now()
 
 class Voters(db.Model):
     __table_name__ = 'voters'
     __table_args__ = (
-        db.Index('ix_voters_election_id_account_id', 'election_id', 'account_id'),
         {'extend_existing': True,
         'mysql_charset': 'utf8mb4',
         'mysql_engine': 'InnoDB'})
  
-    id = db.Column(db.Integer, primary_key=True)
-    election_id = db.Column(db.Integer, nullable=False)
-    account_id = db.Column(db.Integer, nullable=False)
+    election_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=False)
+    account_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=False)
     is_candidate = db.Column(db.Boolean, nullable=False, default=False)
     create_date = db.Column(db.DateTime, nullable=True)
     update_date = db.Column(db.DateTime, nullable=True)
@@ -141,6 +142,13 @@ class Voters(db.Model):
 
     def change_state_candidate(self):
         self.is_candidate = not self.is_candidate
+
+    @property
+    def username(self):
+        acc = Account.query.filter_by(id=self.account_id).first()
+        if acc is not None:
+            return acc.username
+        return None
 
 class Candidate(db.Model):
     __table_name__ = 'candidate'

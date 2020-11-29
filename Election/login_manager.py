@@ -26,17 +26,17 @@ class AdminType(Enum):
 
 # permissions
 class AccountRoles(Enum):
-    Admin = 0
-    User = 1
+    User = 0
+    Admin = 1
 
 # User Roles
-role_admin = RoleNeed(AccountRoles.Admin)
 role_user = RoleNeed(AccountRoles.User)
+role_admin = RoleNeed(AccountRoles.Admin)
 
-role_list = [role_admin, role_user]
+role_list = [role_user, role_admin]
 
 #Permissions
-permission_admin = Permission(role_admin)
 permission_user = Permission(role_user)
+permission_admin = Permission(role_admin)
 
-permission_list = [permission_admin, permission_user]
+permission_list = [permission_user, permission_admin]
