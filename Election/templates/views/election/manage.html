@@ -25,7 +25,7 @@
         <tbody>
             {% for data in res_list.items %}
             <tr>
-                {% if data.state == 0 %}
+                {% if data.startat >= now %}
                 <td>대기</td>
                 {% else %}
                 <td>진행</td>
