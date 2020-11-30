@@ -129,6 +129,12 @@ def add_voters():
             continue
         row = row.split(',')
         account_id = row[0]
+
+##        
+        if len(account_id)==0:
+            return "success"
+##
+
         try:
             if Account.check_account(account_id) is None:
                 raise Exception("account_id '{0}' doesn't exist.".format(account_id))
