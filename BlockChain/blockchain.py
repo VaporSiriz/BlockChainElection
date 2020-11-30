@@ -52,6 +52,9 @@ class BlockChain(object):
                 loop.start()
 
     def create_block(self, nonce, previous_hash):
+        if len(self.transaction_pool) <= 0:
+            return
+
         block = utils.sorted_dict_by_key({
             'timestamp': time.time(),
             'transactions': self.transaction_pool,
@@ -150,7 +153,8 @@ class BlockChain(object):
     def mining(self):
         # if not self.transaction_pool:
         #     return False
-
+        if len(self.transaction_pool) <= 0:
+            return 
         nonce = self.proof_of_work()
         previous_hash = self.hash(self.chain[-1])
         self.create_block(nonce, previous_hash)
