@@ -64,7 +64,7 @@ class BlockChain(object):
         for node in self.neighbours:
             try:
                 #requests.delete(f'http://{node}/transactions')
-                requests.delete(f'{node}/transactions')
+                requests.delete(f'{node}/transactions', timeout=3)
             except Exception as ex:
                 print('ex1 : ', ex)
                 continue
@@ -111,7 +111,7 @@ class BlockChain(object):
                             'candidate_id': candidate_id,
                             'election_id': election_id,
                             'signature': signature,
-                        }
+                        }, timeout=3
                     )
                 except Exception as ex:
                     print('ex2 : ', ex)
@@ -159,7 +159,7 @@ class BlockChain(object):
         for node in self.neighbours:
             try:
                 #requests.put(f'http://{node}/consensus')
-                requests.put(f'{node}/consensus')
+                requests.put(f'{node}/consensus', timeout=3)
             except Exception as ex:
                 print('ex3 : ', ex)
                 continue
@@ -213,7 +213,7 @@ class BlockChain(object):
         for node in self.neighbours:
             try:
                 #response = requests.get(f'http://{node}/chain')
-                response = requests.get(f'{node}/chain')
+                response = requests.get(f'{node}/chain', timeout=3)
                 if response.status_code == 200:
                     response_json = response.json()
                     chain = response_json['chain']

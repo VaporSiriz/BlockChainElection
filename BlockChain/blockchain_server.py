@@ -17,7 +17,6 @@ cache = {}
 
 def init_app():
     app.config.from_object('default_config')
-    print('app.config : ', app.config)
     for logger in app.config.get('LOGGERS', ()):
         app.logger.addHandler(logger)
 
