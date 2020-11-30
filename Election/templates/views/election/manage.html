@@ -98,6 +98,7 @@
         <thead>
             <tr class="bg-dark" style="color: white">
                 <th scope="col">상태</th>
+                <th scope="col">선거 ID</th>
                 <th scope="col">선거 이름</th>
                 <th scope="col">선거 내용</th>
                 <th scope="col">시작 시간</th>
@@ -109,6 +110,7 @@
             {% for data in end_list.items %}
             <tr>
                 <td>종료</td>
+                <td>{{ data.id }}</td>
                 <td>{{ data.title }}</td>
                 <td>{{ data.desc }}</td>
                 <td>{{ data.startat }}</td>

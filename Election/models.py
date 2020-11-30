@@ -131,6 +131,11 @@ class Election(db.Model):
     def is_destroy(self):
         return self.destroy_date is not None
 
+    def destroy(self):
+        self.destroy_date = datetime.now()
+        db_add(self)
+        db_flush()
+
 class Voters(db.Model):
     __table_name__ = 'voters'
     __table_args__ = (
@@ -186,11 +191,6 @@ class Candidate(db.Model):
         self.state = state
         if self.state < CandidateStatus.APPROVE:
             voter = Voters.query.filter(Voters.update_date)
-
-
-    # def __init__(self, title, desc):
-    #     self.title = title
-    #     self.desc = desc
 
 class Vote(db.Model):
     __table_name__ = 'vote'

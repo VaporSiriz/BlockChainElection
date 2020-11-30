@@ -26,12 +26,10 @@ def addElection():
         election = Election(form['title'].data, form['desc'].data, form['startat'].data, form['endat'].data)
         db.session.add(election)
         db.session.flush()
-        adminbox=AdminMessageBox()
 
         el = Election.query.filter_by(title=form['title'].data).filter_by(desc=form['desc'].data).filter_by().filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
         
-        adminbox.election_id=el.id
-        adminbox.admin_id=current_user.id
+        adminbox=AdminMessageBox(el.id, current_user.id)
         db.session.add(adminbox)
         db.session.commit()
 
@@ -44,18 +42,18 @@ def addElection():
 def manageElection():
     form = ManageElectionForm()
     add_election_voter_form = AddElectionVoterForm()
-    now = datetime.now() + timedelta(hours=9)
-    elections = Election.query.all()
+    now = datetime.now()
+    elections = Election.query.filter_by(destroy_date=None).all()
     for election in elections:
-        if datetime.now() < election.endat:
-            add_election_voter_form.election.choices.append((election.id, election.title))
+        if now < election.startat:
+            add_election_voter_form.election.choices.append((election.id, '{0}({1})'.format(election.title, election.id)))
         
     page = request.args.get('page', type=int, default=1)
-    res_list = Election.query.filter(Election.endat >= now).order_by(Election.create_date.asc())
+    res_list = Election.query.filter(Election.endat >= now, Election.destroy_date==None).order_by(Election.create_date.asc())
     res_list = res_list.paginate(page, per_page=4)
 
     page2 = request.args.get('page2', type=int, default=1)
-    end_list = Election.query.filter(Election.endat < now).order_by(Election.create_date.asc())
+    end_list = Election.query.filter(Election.endat < now, Election.destroy_date==None).order_by(Election.create_date.asc())
     end_list = end_list.paginate(page2, per_page=4)
 
     return render_template('views/election/manage.html', res_list=res_list, end_list=end_list, form=form,
@@ -88,6 +86,17 @@ def end_election(election_id):
         election.endat = datetime.now()
         db_add(election)
         db_flush()
+        return '', 200
+    return '', 400
+
+@permission_admin.require(http_exception=403)
+@election_page.route('/manage/destroy_election/<int:election_id>', methods=['POST'])
+def destroy_election(election_id):
+    election_id = int(election_id)
+    election = Election.query.filter_by(id=election_id).first()
+    if election is not None:
+        now = datetime.now()
+        election.destroy()
         return '', 200
     return '', 400
 
