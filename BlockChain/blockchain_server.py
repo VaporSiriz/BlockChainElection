@@ -20,8 +20,8 @@ def init_app():
     for logger in app.config.get('LOGGERS', ()):
         app.logger.addHandler(logger)
 
-    #get_blockchain()
-    #run_blockchain()
+    get_blockchain()
+    run_blockchain()
 
     return app
 
@@ -144,12 +144,20 @@ def consensus():
     replaced = block_chain.resolve_conflicts()
     return jsonify({'replaced': replaced}), 200
 
+@app.route('/check_vote', methods=['GET'])
+def check_vote():
+    election_id = request.args['election_id']
+    account_address = request.args['account_address']
+    
+    return jsonify({
+        'candidate_id': get_blockchain().check_vote(election_id, account_address)
+    }), 200
 
 @app.route('/amount', methods=['GET'])
 def get_total_amount():
-    blockchain_address = request.args['blockchain_address']
+    election_id = request.args['election_id']
     return jsonify({
-        'amount': get_blockchain().calculate_total_amount(blockchain_address)
+        'data': get_blockchain().calculate_total_amount(election_id)
     }), 200
 
 @app.before_request

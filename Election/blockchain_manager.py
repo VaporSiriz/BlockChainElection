@@ -44,9 +44,9 @@ class BlockChainManager(SingletonInstane):
         url = self.url_format.format(self.blockchain_urls[self.get_blockchain_server_with_rand()-1], 'transactions')
         print('url : ', url)
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        rsp = requests.post(url, data, headers=headers, timeout=3)
+        rsp = requests.post(url, data, headers=headers)
         
-        if rsp.status_code == 200:
+        if rsp.status_code == 201:
             return True
         else:
             return False

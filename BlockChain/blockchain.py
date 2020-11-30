@@ -15,7 +15,7 @@ import utils
 MINING_DIFFICULTY = 3
 MINING_SENDER = 'THE BLOCKCHAIN'
 MINING_REWARD = 1.0
-MINING_TIMER_SEC = 20
+MINING_TIMER_SEC = 30
 
 BLOCKCHAIN_PORT_RANGE = (5000, 5003)
 NEIGHBOURS_IP_RANGE_NUM = (0, 1)
@@ -42,7 +42,6 @@ class BlockChain(object):
         self.start_mining()
 
     def sync_neighbours(self):
-        print('1')
         is_acquire = self.sync_neighbours_semaphore.acquire(blocking=False)
         if is_acquire:
             with contextlib.ExitStack() as stack:
@@ -52,9 +51,6 @@ class BlockChain(object):
                 loop.start()
 
     def create_block(self, nonce, previous_hash):
-        if len(self.transaction_pool) <= 0:
-            return
-
         block = utils.sorted_dict_by_key({
             'timestamp': time.time(),
             'transactions': self.transaction_pool,
@@ -153,8 +149,6 @@ class BlockChain(object):
     def mining(self):
         # if not self.transaction_pool:
         #     return False
-        if len(self.transaction_pool) <= 0:
-            return 
         nonce = self.proof_of_work()
         previous_hash = self.hash(self.chain[-1])
         self.create_block(nonce, previous_hash)
@@ -180,18 +174,23 @@ class BlockChain(object):
                 loop = threading.Timer(MINING_TIMER_SEC, self.start_mining)
                 loop.start()
 
-    def calculate_total_amount(self, blockchain_address):
-        total_amount = 0.0
+    def check_vote(self, election_id, account_address):
         for block in self.chain:
             for transaction in block['transactions']:
-                value = float(transaction['value'])
-                if blockchain_address == \
-                        transaction['recipient_blockchain_address']:
-                    total_amount += value
-                if blockchain_address == \
-                        transaction['sender_blockchain_address']:
-                    total_amount -= value
-        return total_amount
+                if account_address == transaction['account_address'] and \
+                   election_id == transaction['election_id']:
+                    candidate_id = transaction['candidate_id']
+        return candidate_id
+
+    def calculate_total_amount(self, election_id):
+        votes = {}
+        for block in self.chain:
+            for transaction in block['transactions']:
+                if election_id == transaction['election_id']:
+                    if transaction['candidate_id'] not in votes.keys():
+                        votes[transaction['candidate_id']] = 0
+                    votes[transaction['candidate_id']] += 1
+        return votes
 
     def valid_chain(self, chain):
         pre_block = chain[0]
