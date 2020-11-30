@@ -36,7 +36,9 @@
                 <td>{{ data.startat }}</td>
                 <td>{{ data.endat }}</td>
                 <td>
+                    {% if data.in_works() == True %}
                     <a href="/election/modify/{{data.id}}" class="btn btn-dark btn-sm">수정</a>
+                    {% endif %}
                     {% if data.in_works() == False %}
                     <button type="button" class="btn btn-dark btn-sm" id="startbtn" name="startbtn" data-election-id="{{ data.id }}">시작</button>
                     {% endif %}
