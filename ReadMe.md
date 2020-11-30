@@ -15,12 +15,39 @@ migrations 디렉토리가 생성된 것을 확인
 $ python3 manager.py db migrate --message 'migrate msg'
 
 ### 3. 
-$ manager.py db upgrade
+$ python3 manager.py db upgrade (or downgrade)
 
 ## 블록체인(BlockChain)
 ### 1.
 블록체인의 경우 Chain을 sync시 내부 파일로 저장
 3개의 블록 체인 컨테이너를 띄우고 서로 데이터를 주고 받을 수 있도록
+
+json format of blockchain
+[
+    {
+        "election_id": --,
+        "votes": [
+            {
+                "tansactions": [],
+                "timestamp": --,
+                "nonce": --,
+                "pre_hash": --
+            },
+            {
+                "tansactions": [],
+                "timestamp": --,
+                "nonce": --,
+                "pre_hash": --
+            }, ...
+        ]
+    }
+]
+
+and json format of transaction :
+{
+    "account_address": --,
+    "candidate_id": --
+}
 
 ## 선거(Election)
 ### 1.

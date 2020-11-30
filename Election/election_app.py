@@ -36,10 +36,7 @@ def init_app():
 
     # BlockChainManager is Singleton Object
     BlockChainManager.instance().init_app(app)
-    BlockChainManager.instance().load_blockchain_server()
     return app
-
-
 
 @app.after_request
 def after_request(response):

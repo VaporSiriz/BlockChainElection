@@ -27,13 +27,12 @@ logger = logging.getLogger(__name__)
 
 class BlockChain(object):
 
-    def __init__(self, blockchain_address=None, port=None):
+    def __init__(self, neighbours=[]):
         self.transaction_pool = []
         self.chain = []
-        self.neighbours = []
+        self.neighbours = neighbours
+        print('self.neighbours : ', self.neighbours)
         self.create_block(0, self.hash({}))
-        self.blockchain_address = blockchain_address
-        self.port = port
         self.mining_semaphore = threading.Semaphore(1)
         self.sync_neighbours_semaphore = threading.Semaphore(1)
 
@@ -42,21 +41,12 @@ class BlockChain(object):
         self.resolve_conflicts()
         self.start_mining()
 
-    def set_neighbours(self):
-        self.neighbours = utils.find_neighbours(
-            utils.get_host(), self.port,
-            NEIGHBOURS_IP_RANGE_NUM[0], NEIGHBOURS_IP_RANGE_NUM[1],
-            BLOCKCHAIN_PORT_RANGE[0], BLOCKCHAIN_PORT_RANGE[1])
-        logger.info({
-            'action': 'set_neighbours', 'neighbours': self.neighbours
-        })
-
     def sync_neighbours(self):
+        print('1')
         is_acquire = self.sync_neighbours_semaphore.acquire(blocking=False)
         if is_acquire:
             with contextlib.ExitStack() as stack:
                 stack.callback(self.sync_neighbours_semaphore.release)
-                self.set_neighbours()
                 loop = threading.Timer(
                     BLOCKCHAIN_NEIGHBOURS_SYNC_TIME_SEC, self.sync_neighbours)
                 loop.start()
@@ -72,7 +62,12 @@ class BlockChain(object):
         self.transaction_pool = []
 
         for node in self.neighbours:
-            requests.delete(f'http://{node}/transactions')
+            try:
+                #requests.delete(f'http://{node}/transactions')
+                requests.delete(f'{node}/transactions')
+            except Exception as ex:
+                print('ex1 : ', ex)
+                continue
 
         return block
 
@@ -80,63 +75,57 @@ class BlockChain(object):
         sorted_block = json.dumps(block, sort_keys=True)
         return hashlib.sha256(sorted_block.encode()).hexdigest()
 
-    def add_transaction(self, sender_blockchain_address,
-                        recipient_blockchain_address, value,
-                        sender_public_key=None, signature=None):
+    def add_transaction(self, account_address,
+                        account_public_key, candidate_id,
+                        election_id=None, signature=None):
         transaction = utils.sorted_dict_by_key({
-            'sender_blockchain_address': sender_blockchain_address,
-            'recipient_blockchain_address': recipient_blockchain_address,
-            'value': float(value)
+            'election_id': election_id,
+            'account_address': account_address,
+            'candidate_id': candidate_id,
         })
 
-        if sender_blockchain_address == MINING_SENDER:
-            self.transaction_pool.append(transaction)
-            return True
-
         if self.verify_transaction_signature(
-                sender_public_key, signature, transaction):
-
-            if (self.calculate_total_amount(sender_blockchain_address)
-                    < float(value)):
-                logger.error(
-                        {'action': 'add_transaction', 'error': 'no_value'})
-                return False
-
+                account_public_key, signature, transaction):
             self.transaction_pool.append(transaction)
             return True
         return False
 
-    def create_transaction(self, sender_blockchain_address,
-                           recipient_blockchain_address, value,
-                           sender_public_key, signature):
+    def create_transaction(self, account_address,
+                           account_public_key, candidate_id,
+                           election_id, signature):
 
         is_transacted = self.add_transaction(
-            sender_blockchain_address, recipient_blockchain_address,
-            value, sender_public_key, signature)
+            account_address, account_public_key,
+            candidate_id, election_id, signature)
 
         if is_transacted:
             for node in self.neighbours:
-                requests.put(
-                    f'http://{node}/transactions',
-                    json={
-                        'sender_blockchain_address': sender_blockchain_address,
-                        'recipient_blockchain_address':
-                            recipient_blockchain_address,
-                        'value': value,
-                        'sender_public_key': sender_public_key,
-                        'signature': signature,
-                    }
-                )
+                try:
+                    requests.put(
+                        #f'http://{node}/transactions',
+                        f'{node}/transactions',
+                        json={
+                            'account_address': account_address,
+                            'account_public_key':
+                                account_public_key,
+                            'candidate_id': candidate_id,
+                            'election_id': election_id,
+                            'signature': signature,
+                        }
+                    )
+                except Exception as ex:
+                    print('ex2 : ', ex)
+                    continue
         return is_transacted
 
     def verify_transaction_signature(
-            self, sender_public_key, signature, transaction):
+            self, account_public_key, signature, transaction):
         sha256 = hashlib.sha256()
         sha256.update(str(transaction).encode('utf-8'))
         message = sha256.digest()
         signature_bytes = bytes().fromhex(signature)
         verifying_key = VerifyingKey.from_string(
-            bytes().fromhex(sender_public_key), curve=NIST256p)
+            bytes().fromhex(account_public_key), curve=NIST256p)
         verified_key = verifying_key.verify(signature_bytes, message)
         return verified_key
 
@@ -162,21 +151,23 @@ class BlockChain(object):
         # if not self.transaction_pool:
         #     return False
 
-        self.add_transaction(
-            sender_blockchain_address=MINING_SENDER,
-            recipient_blockchain_address=self.blockchain_address,
-            value=MINING_REWARD)
         nonce = self.proof_of_work()
         previous_hash = self.hash(self.chain[-1])
         self.create_block(nonce, previous_hash)
         logger.info({'action': 'mining', 'status': 'success'})
 
         for node in self.neighbours:
-            requests.put(f'http://{node}/consensus')
+            try:
+                #requests.put(f'http://{node}/consensus')
+                requests.put(f'{node}/consensus')
+            except Exception as ex:
+                print('ex3 : ', ex)
+                continue
 
         return True
 
     def start_mining(self):
+        print('3')
         is_acquire = self.mining_semaphore.acquire(blocking=False)
         if is_acquire:
             with contextlib.ExitStack() as stack:
@@ -216,17 +207,23 @@ class BlockChain(object):
         return True
 
     def resolve_conflicts(self):
+        print('2')
         longest_chain = None
         max_length = len(self.chain)
         for node in self.neighbours:
-            response = requests.get(f'http://{node}/chain')
-            if response.status_code == 200:
-                response_json = response.json()
-                chain = response_json['chain']
-                chain_length = len(chain)
-                if chain_length > max_length and self.valid_chain(chain):
-                    max_length = chain_length
-                    longest_chain = chain
+            try:
+                #response = requests.get(f'http://{node}/chain')
+                response = requests.get(f'{node}/chain')
+                if response.status_code == 200:
+                    response_json = response.json()
+                    chain = response_json['chain']
+                    chain_length = len(chain)
+                    if chain_length > max_length and self.valid_chain(chain):
+                        max_length = chain_length
+                        longest_chain = chain
+            except Exception as ex:
+                    print('ex4 : ', ex)
+                    continue
 
         if longest_chain:
             self.chain = longest_chain
