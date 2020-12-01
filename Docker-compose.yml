@@ -38,7 +38,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=rootpassword
       - server_build_type=Local
-      # - BlockChainURL=blockchain # local에서 돌리는 경우
+      - BlockChainURL=blockchain # local에서 돌리는 경우
       # 임시 ec2
       - BlockChainURL1=ec2-3-94-55-102.compute-1.amazonaws.com
       - BlockChainURL2=ec2-54-157-175-80.compute-1.amazonaws.com
@@ -47,86 +47,89 @@ services:
       - BlockChainPort=5000
     ports:
       - "5000:5000"
-      - "8000:8000"
+      - "8080:8080"
       - "80:80"
     links:
       - db
-      # - blockchain1
-      # - blockchain2
-      # - blockchain3
+      - blockchain1
+      - blockchain2
+      - blockchain3
     sysctls:
       - net.core.somaxconn=4096
     networks:
       - custom
     depends_on:
       - db
-      # - blockchain1
-      # - blockchain2
-      # - blockchain3
+      - blockchain1
+      - blockchain2
+      - blockchain3
     tty: true
 
-  # blockchain1:
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile
-  #   volumes:
-  #     - ./BlockChain:/app
-  #   ports:
-  #     - "5001:5000"
-  #   environment:
-  #     - BlockChainURL1=blockchain2:5000
-  #     - BlockChainURL2=blockchain3:5000
-  #   networks:
-  #     - custom
-  #   external_links:
-  #     - blockchain1:blockchain2
-  #     - blockchain2:blockchain3
-  #   sysctls:
-  #     - net.core.somaxconn=4096
-  #   #tty: true
-  #   command: python3 manager.py runserver -p 5000 -h 0.0.0.0
+  blockchain1:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./BlockChain:/app
+    ports:
+      - "5001:5000"
+    environment:
+      - BlockChainURL1=http://blockchain2:5000
+      - BlockChainURL2=http://blockchain3:5000
+    networks:
+      - custom
+    external_links:
+      - blockchain1:blockchain2
+      - blockchain2:blockchain3
+    sysctls:
+      - net.core.somaxconn=4096
+    tty: true
+    command: uwsgi uwsgi_blockchain.ini
+    #python3 manager.py runserver -p 5000 -h 0.0.0.0
 
-  # blockchain2:
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile
-  #   volumes:
-  #     - ./BlockChain:/app
-  #   ports:
-  #     - "5002:5000"
-  #   environment:
-  #     - BlockChainURL1=blockchain1:5000
-  #     - BlockChainURL2=blockchain3:5000
-  #   networks:
-  #     - custom
-  #   external_links:
-  #     - blockchain1:blockchain1
-  #     - blockchain3:blockchain3
-  #   sysctls:
-  #     - net.core.somaxconn=4096
-  #   #tty: true
-  #   command: python3 manager.py runserver -p 5000 -h 0.0.0.0
+  blockchain2:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./BlockChain:/app
+    ports:
+      - "5002:5000"
+    environment:
+      - BlockChainURL1=http://blockchain1:5000
+      - BlockChainURL2=http://blockchain3:5000
+    networks:
+      - custom
+    external_links:
+      - blockchain1:blockchain1
+      - blockchain3:blockchain3
+    sysctls:
+      - net.core.somaxconn=4096
+    #tty: true
+    command: uwsgi uwsgi_blockchain.ini
+    #python3 manager.py runserver -p 5000 -h 0.0.0.0
 
-  # blockchain3:
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile
-  #   volumes:
-  #     - ./BlockChain:/app
-  #   ports:
-  #     - "5003:5000"
-  #   environment:
-  #     - BlockChainURL1=blockchain1:5000
-  #     - BlockChainURL2=blockchain2:5000
-  #   networks:
-  #     - custom
-  #   external_links:
-  #     - blockchain1:blockchain1
-  #     - blockchain2:blockchain2
-  #   sysctls:
-  #     - net.core.somaxconn=4096
-  #   #tty: true
-  #   command: python3 manager.py runserver -p 5000 -h 0.0.0.0
+  blockchain3:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./BlockChain:/app
+    ports:
+      - "5003:5000"
+    environment:
+      - BlockChainURL1=http://blockchain1:5000
+      - BlockChainURL2=http://blockchain2:5000
+    networks:
+      - custom
+    external_links:
+      - blockchain1:blockchain1
+      - blockchain2:blockchain2
+    sysctls:
+      - net.core.somaxconn=4096
+    #tty: true
+    command: uwsgi uwsgi_blockchain.ini
+    #python3 manager.py runserver -p 5000 -h 0.0.0.0
 
 networks:
   custom:

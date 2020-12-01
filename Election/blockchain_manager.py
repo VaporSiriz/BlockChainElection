@@ -20,7 +20,7 @@ class BlockChainManager(SingletonInstane):
     def init_app(self, app):
         self._app = app
         self.loaded_blockchain_server = []
-        # self.blockchain_url = app.config['BLOCKCHAINURL']
+        self.blockchain_url = app.config['BLOCKCHAINURL']
         self.blockchain_number = app.config['BLOCKCHAINNUMBER']
         self.url_format = app.config['BLOCKCHAINFORMAT']
         #self.blockchain_urls = app.config['EC2BLOCKCHAINURL']
@@ -40,15 +40,31 @@ class BlockChainManager(SingletonInstane):
                             'signature': transaction.generate_signature()
                           }))
         print('data : ', data)
-        #url = self.url_format.format(self.blockchain_url, self.get_blockchain_server_with_rand(), 'transactions')
-        url = self.url_format.format(self.blockchain_urls[self.get_blockchain_server_with_rand()-1], 'transactions')
+        rand_num = self.get_blockchain_server_with_rand()
+        url = self.url_format.format(self.blockchain_url, rand_num, 'transactions')
         print('url : ', url)
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         rsp = requests.post(url, data, headers=headers)
-        
         if rsp.status_code == 201:
-            return True
-        else:
-            return False
+            sleep(1)
+            url = self.url_format.format(self.blockchain_url, rand_num, 'mine')
+            rsp = requests.get(url)
+            if rsp.status_code == 200:
+                for i in range(1, self.blockchain_number+1):
+                    url = self.url_format.format(self.blockchain_url, i, 'resolve_conflicts')
+                    rsp = requests.get(url)
+                    if rsp.status_code != 200:
+                        return False
+                    sleep(1)
+                    url = self.url_format.format(self.blockchain_url, rand_num, 'transactions')
+                    rsp = requests.delete(url)
+                    print(rsp)
+                return True
+        return False
 
+    def get_vote_result(self, election_id):
+        params = {'election_id': election_id}
+        rand_num = self.get_blockchain_server_with_rand()
+        url = self.url_format.format(self.blockchain_url, rand_num, 'result')
+    
     

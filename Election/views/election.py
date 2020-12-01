@@ -12,7 +12,17 @@ election_page = Blueprint('election_page', __name__, template_folder='templates'
 @election_page.route('/')
 def index():
     
-    return render_template('views/election/list.html')
+    return render_template('views/election/index.html')
+
+@election_page.route('/voter_list')
+def voter_list():
+    
+    return render_template('views/election/voterlist.html')
+
+@election_page.route('/detail')
+def detail():
+    
+    return render_template('views/election/detail.html')
 
 @permission_admin.require(http_exception=403)
 @election_page.route('/add', methods=['GET', 'POST'])

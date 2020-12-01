@@ -46,7 +46,7 @@ def login():
         user = db.session.query(Account).filter(Account.username==username).first()#type: Account
         print(user)
         if user is not None and user.check_password(password):
-            print(u"로그인 성공")
+            print(u"login success")
 
             login_user(user)
             identity_changed.send(current_app._get_current_object(), identity=Identity(user.id))

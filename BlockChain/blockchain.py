@@ -9,13 +9,14 @@ import threading
 from ecdsa import NIST256p
 from ecdsa import VerifyingKey
 import requests
-
+from time import sleep
 import utils
+from singleton import SingletonInstane
 
-MINING_DIFFICULTY = 3
+MINING_DIFFICULTY = 1
 MINING_SENDER = 'THE BLOCKCHAIN'
 MINING_REWARD = 1.0
-MINING_TIMER_SEC = 30
+MINING_TIMER_SEC = 10
 
 BLOCKCHAIN_PORT_RANGE = (5000, 5003)
 NEIGHBOURS_IP_RANGE_NUM = (0, 1)
@@ -25,32 +26,27 @@ logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger(__name__)
 
 
-class BlockChain(object):
+class BlockChain(SingletonInstane):
 
-    def __init__(self, neighbours=[]):
+    def __init__(self):
+        self.app = None
+        self.transaction_pool = []
+        self.chain = []
+        self.neighbours = []
+
+    def init_blockchain(self, app, neighbours=[]):
+        self.app = app
         self.transaction_pool = []
         self.chain = []
         self.neighbours = neighbours
-        print('self.neighbours : ', self.neighbours)
-        self.create_block(0, self.hash({}))
-        self.mining_semaphore = threading.Semaphore(1)
-        self.sync_neighbours_semaphore = threading.Semaphore(1)
+        self.create_block(0, self.hash({}), True)
 
     def run(self):
-        self.sync_neighbours()
-        self.resolve_conflicts()
-        self.start_mining()
+        #self.resolve_conflicts()
+        #self.start_mining()
+        pass
 
-    def sync_neighbours(self):
-        is_acquire = self.sync_neighbours_semaphore.acquire(blocking=False)
-        if is_acquire:
-            with contextlib.ExitStack() as stack:
-                stack.callback(self.sync_neighbours_semaphore.release)
-                loop = threading.Timer(
-                    BLOCKCHAIN_NEIGHBOURS_SYNC_TIME_SEC, self.sync_neighbours)
-                loop.start()
-
-    def create_block(self, nonce, previous_hash):
+    def create_block(self, nonce, previous_hash, is_first=False):
         block = utils.sorted_dict_by_key({
             'timestamp': time.time(),
             'transactions': self.transaction_pool,
@@ -59,11 +55,13 @@ class BlockChain(object):
         })
         self.chain.append(block)
         self.transaction_pool = []
-
+        #if not is_first:
         for node in self.neighbours:
             try:
-                #requests.delete(f'http://{node}/transactions')
-                requests.delete(f'{node}/transactions', timeout=3)
+                url = self.app.config['BLOCKCHAINURLFORMAT'].format(node, 'transactions')
+                rsp = requests.delete(url, timeout=3)
+                print('delete rsp : ', rsp)
+                sleep(1)
             except Exception as ex:
                 print('ex1 : ', ex)
                 continue
@@ -86,32 +84,34 @@ class BlockChain(object):
         if self.verify_transaction_signature(
                 account_public_key, signature, transaction):
             self.transaction_pool.append(transaction)
+            print('add_transaction success : ', self.transaction_pool)
             return True
+        print('add_transaction fail')
         return False
 
     def create_transaction(self, account_address,
                            account_public_key, candidate_id,
                            election_id, signature):
-
+        print('create_transaction')
         is_transacted = self.add_transaction(
             account_address, account_public_key,
             candidate_id, election_id, signature)
 
         if is_transacted:
             for node in self.neighbours:
+                print('create transaction node : ', node)
                 try:
-                    requests.put(
-                        #f'http://{node}/transactions',
-                        f'{node}/transactions',
+                    url = self.app.config['BLOCKCHAINURLFORMAT'].format(node, 'transactions')
+                    requests.put(url,
                         json={
                             'account_address': account_address,
-                            'account_public_key':
-                                account_public_key,
+                            'account_public_key':account_public_key,
                             'candidate_id': candidate_id,
                             'election_id': election_id,
                             'signature': signature,
                         }, timeout=3
                     )
+                    sleep(1)
                 except Exception as ex:
                     print('ex2 : ', ex)
                     continue
@@ -153,43 +153,39 @@ class BlockChain(object):
         previous_hash = self.hash(self.chain[-1])
         self.create_block(nonce, previous_hash)
         logger.info({'action': 'mining', 'status': 'success'})
-
+        print('self.neighbours : ', self.neighbours)
         for node in self.neighbours:
             try:
-                #requests.put(f'http://{node}/consensus')
-                requests.put(f'{node}/consensus', timeout=3)
+                url = self.app.config['BLOCKCHAINURLFORMAT'].format(node, 'consensus')
+                rsp = requests.put(url, timeout=3)
+                sleep(1)
             except Exception as ex:
                 print('ex3 : ', ex)
                 continue
 
         return True
 
-    def start_mining(self):
-        print('3')
-        is_acquire = self.mining_semaphore.acquire(blocking=False)
-        if is_acquire:
-            with contextlib.ExitStack() as stack:
-                stack.callback(self.mining_semaphore.release)
-                self.mining()
-                loop = threading.Timer(MINING_TIMER_SEC, self.start_mining)
-                loop.start()
-
     def check_vote(self, election_id, account_address):
+        candidate_id = 0
         for block in self.chain:
             for transaction in block['transactions']:
                 if account_address == transaction['account_address'] and \
                    election_id == transaction['election_id']:
                     candidate_id = transaction['candidate_id']
+                    break
         return candidate_id
 
-    def calculate_total_amount(self, election_id):
+    def calculate_result(self, election_id):
         votes = {}
+        print('self.chain : ', self.chain)
         for block in self.chain:
             for transaction in block['transactions']:
+                print('transaction : ', transaction)
                 if election_id == transaction['election_id']:
                     if transaction['candidate_id'] not in votes.keys():
                         votes[transaction['candidate_id']] = 0
                     votes[transaction['candidate_id']] += 1
+        print('votes')
         return votes
 
     def valid_chain(self, chain):
@@ -210,13 +206,13 @@ class BlockChain(object):
         return True
 
     def resolve_conflicts(self):
-        print('2')
+        print('resolve_conflicts')
         longest_chain = None
         max_length = len(self.chain)
         for node in self.neighbours:
             try:
-                #response = requests.get(f'http://{node}/chain')
-                response = requests.get(f'{node}/chain', timeout=3)
+                url = self.app.config['BLOCKCHAINURLFORMAT'].format(node, 'chain')
+                response = requests.get(url, timeout=3)
                 if response.status_code == 200:
                     response_json = response.json()
                     chain = response_json['chain']
@@ -224,6 +220,7 @@ class BlockChain(object):
                     if chain_length > max_length and self.valid_chain(chain):
                         max_length = chain_length
                         longest_chain = chain
+                sleep(1)
             except Exception as ex:
                     print('ex4 : ', ex)
                     continue
