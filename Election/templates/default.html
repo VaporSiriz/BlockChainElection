@@ -4,21 +4,21 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta http-equiv="pragma" content="no-cache">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="description" content="">
         <meta name="author" content="">
 
         <title>BlockChain Election</title>
 
         <!-- Bootstrap Core CSS -->
-        <!--<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">-->
         <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
         <!-- Custom CSS -->
         <link href="{{ url_for('static', filename='css/default.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ url_for('static', filename='css/reset.css') }}" rel="stylesheet" type="text/css">
         <!-- Morris Charts CSS -->
 
-        <!-- Custom Fonts -->
-
+        <!-- Fonts -->
+        <script src='https://kit.fontawesome.com/a076d05399.js'></script>
         <!-- Typeahead css -->
 
         {% block head %}{% endblock %}
@@ -83,10 +83,9 @@
         <!-- Bootstrap Core JavaScript -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <!-- Morris Charts JavaScript -->
-
+        <!-- extra JavaScript -->
+        <script src='https://kit.fontawesome.com/a076d05399.js'></script>
         <!-- developer's JavaScript -->
-
         {% block script %}{% endblock %}
     </body>
 </html>

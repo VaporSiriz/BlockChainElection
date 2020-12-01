@@ -109,4 +109,32 @@ $(function() {
             console.log('cancel!');
         }
     });
+    
+    $("#destroybtn").click(function(){
+        var election_id = $(this).data("election-id");
+        var result = confirm("해당 선거를 삭제하시겠습니까?");
+        if(result){
+            $.ajax({
+                type:"POST",
+                url: flask_util.url_for('election_page.destroy_election', {election_id:election_id})
+            })
+            .done(function(data) {
+                alert('선거가 삭제 되었습니다.');
+                location.reload();
+            })
+            .fail(function(data){
+                if(data.status == 403)
+                {
+                    alert("수정권한이 없습니다.");
+                }
+                else {
+                    alert(data.responseText);
+                    console.log(data);
+                }
+            });
+        }
+        else{
+            console.log('cancel!');
+        }
+    });
 })

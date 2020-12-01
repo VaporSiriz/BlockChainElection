@@ -36,10 +36,8 @@
                 <td>{{ data.startat }}</td>
                 <td>{{ data.endat }}</td>
                 <td>
-                    {% if data.in_works() == True %}
-                    <a href="/election/modify/{{data.id}}" class="btn btn-dark btn-sm">수정</a>
-                    {% endif %}
                     {% if data.in_works() == False %}
+                    <a href="/election/modify/{{data.id}}" class="btn btn-dark btn-sm">수정</a>
                     <button type="button" class="btn btn-dark btn-sm" id="startbtn" name="startbtn" data-election-id="{{ data.id }}">시작</button>
                     {% endif %}
                     <button type="button" class="btn btn-dark btn-sm" id="endbtn" name="endbtn" data-election-id="{{ data.id }}">종료</button>
@@ -116,11 +114,9 @@
                 <td>{{ data.startat }}</td>
                 <td>{{ data.endat }}</td>
                 <td>
-                    <form>
-                        <button type="submit" class="btn btn-dark btn-sm" id="delbtn" name="delbtn" value="{{ data.id }}">삭제</button>
-                        <button type="button" class="btn btn-dark btn-sm" id="lookupvotersbtn" name="lookupvotersbtn" 
+                    <button type="button" class="btn btn-dark btn-sm" id="destroybtn" name="destroybtn" data-election-id="{{ data.id }}">삭제</button>
+                    <button type="button" class="btn btn-dark btn-sm" id="lookupvotersbtn" name="lookupvotersbtn" 
                             onclick=location.href="{{ url_for('election_page.view_voters', election_id=data.id) }}">투표자 조회</button>
-                    </form>
                 </td>
             </tr>
             {% endfor %}
@@ -173,7 +169,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title">Modal title</h5>
+            <h5 class="modal-title">투표자 추가</h5><small><code>대기 상태인 선거만 가능합니다.</code></small>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
