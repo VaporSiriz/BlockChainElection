@@ -11,8 +11,10 @@ election_page = Blueprint('election_page', __name__, template_folder='templates'
 
 @election_page.route('/')
 def index():
-    
-    return render_template('views/election/index.html')
+    now = datetime.now()
+    startElections = Election.query.filter(Election.destroy_date==None).filter(Election.startat <= now).filter(Election.endat > now).all()
+    endElections = Election.query.filter(Election.destroy_date==None).filter(Election.endat <= now).all()
+    return render_template('views/election/index.html', startElections=startElections, endElections=endElections)
 
 @election_page.route('/voter_list')
 def voter_list():
