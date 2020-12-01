@@ -27,3 +27,5 @@ LOGGERS = [file_handler]
 BLOCKCHAINURL = os.getenv("BlockChainURL", "127.0.0.1")
 BLOCKCHAINNUMBER = int(os.getenv("BlockChainNumber", 0))
 BLOCKCHAINFORMAT = 'http://{0}{1}:5000/{2}'
+#BLOCKCHAINFORMAT = 'http://{0}/{1}'
+EC2BLOCKCHAINURL=[os.getenv("BlockChainURL1", None), os.getenv("BlockChainURL2", None), os.getenv("BlockChainURL3", None)]
