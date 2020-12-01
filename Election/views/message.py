@@ -212,3 +212,15 @@ def readDb():
 
 
     return render_template('views/message/staris3.html',m=n.desc)
+
+@message_page.route('/vindex')
+def vindex():
+    return render_template('views/voter/index.html')
+
+@message_page.route('/detail')
+def detail():
+    return render_template('views/voter/detail.html')
+
+@message_page.route('/voterlist')
+def voterlist():
+    return render_template('views/voter/voterlist.html')
