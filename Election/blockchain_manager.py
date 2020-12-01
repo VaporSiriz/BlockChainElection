@@ -23,7 +23,7 @@ class BlockChainManager(SingletonInstane):
         # self.blockchain_url = app.config['BLOCKCHAINURL']
         self.blockchain_number = app.config['BLOCKCHAINNUMBER']
         self.url_format = app.config['BLOCKCHAINFORMAT']
-        self.blockchain_urls = app.config['EC2BLOCKCHAINURL']
+        #self.blockchain_urls = app.config['EC2BLOCKCHAINURL']
         self._semaphore = threading.Semaphore(1)
 
     def get_blockchain_server_with_rand(self):
