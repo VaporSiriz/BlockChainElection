@@ -112,7 +112,6 @@
                             <div class="card">
                                 <img src="{{ url_for('static', filename='hj/images/p5.jpg') }}" class="card-img-top" alt="...">
                                 <div class="card-body">
-                                    <h5 class="card-title">푸르지오 아파트 관리자 대표 선거</h5>
                                     <h5 class="card-title">{{ dead_election.title }}</h5>
                                         현재 투표 수 : {{ dead_votes[dead_election.id]['num_of_vote'] }}<br>
                                         목표 투표 수 : {{ dead_votes[dead_election.id]['whole_of_vote'] }}<br>
