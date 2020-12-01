@@ -36,7 +36,9 @@
                 <td>{{ data.startat }}</td>
                 <td>{{ data.endat }}</td>
                 <td>
+                    {% if data.in_works() == True %}
                     <a href="/election/modify/{{data.id}}" class="btn btn-dark btn-sm">수정</a>
+                    {% endif %}
                     {% if data.in_works() == False %}
                     <button type="button" class="btn btn-dark btn-sm" id="startbtn" name="startbtn" data-election-id="{{ data.id }}">시작</button>
                     {% endif %}
@@ -96,6 +98,7 @@
         <thead>
             <tr class="bg-dark" style="color: white">
                 <th scope="col">상태</th>
+                <th scope="col">선거 ID</th>
                 <th scope="col">선거 이름</th>
                 <th scope="col">선거 내용</th>
                 <th scope="col">시작 시간</th>
@@ -107,6 +110,7 @@
             {% for data in end_list.items %}
             <tr>
                 <td>종료</td>
+                <td>{{ data.id }}</td>
                 <td>{{ data.title }}</td>
                 <td>{{ data.desc }}</td>
                 <td>{{ data.startat }}</td>

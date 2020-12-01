@@ -20,8 +20,8 @@ file_handler.setFormatter(formatter)
 
 LOGGERS = [file_handler]
 
-BlockChainUrlFormat = '{0}/{1}'
-BlockChainUrls= [BlockChainUrlFormat.format(os.getenv("BlockChainURL1", "127.0.0.1"), 'health_check'),
-                 BlockChainUrlFormat.format(os.getenv("BlockChainURL2", "127.0.0.1"), 'health_check')]
-
-BlockChainPorts = range(5000, 5003)# 5000:5003 번포트 사용
+BLOCKCHAINURLFORMAT = 'http://{0}/{1}'
+#BLOCKCHAINURLS= [os.getenv("BlockChainURL1", "127.0.0.1"), os.getenv("BlockChainURL2", "127.0.0.1")] local
+# 임시로 사용하는 URL
+BLOCKCHAINURLS= [os.getenv("BlockChainURL1", "127.0.0.1"), 
+                 os.getenv("BlockChainURL2", "127.0.0.1")]

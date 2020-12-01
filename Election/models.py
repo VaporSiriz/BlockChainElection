@@ -7,7 +7,7 @@ import base58
 import codecs
 import hashlib
 from datetime import datetime
-from enums import CandidateStatus
+from enums import CandidateStatus, VoteStatus
 
 db = SQLAlchemy()
 
@@ -113,6 +113,7 @@ class Election(db.Model):
     create_date = db.Column(db.DateTime(), nullable=False)
     startat = db.Column(db.DateTime(), nullable=False)
     endat = db.Column(db.DateTime(), nullable=False)
+    destroy_date = db.Column(db.DateTime(), nullable=True)
 
     def __init__(self, title, desc, startat, endat):
         self.title = title
@@ -126,6 +127,14 @@ class Election(db.Model):
 
     def in_works(self):
         return self.startat <= datetime.now()
+
+    def is_destroy(self):
+        return self.destroy_date is not None
+
+    def destroy(self):
+        self.destroy_date = datetime.now()
+        db_add(self)
+        db_flush()
 
 class Voters(db.Model):
     __table_name__ = 'voters'
@@ -183,11 +192,6 @@ class Candidate(db.Model):
         if self.state < CandidateStatus.APPROVE:
             voter = Voters.query.filter(Voters.update_date)
 
-
-    # def __init__(self, title, desc):
-    #     self.title = title
-    #     self.desc = desc
-
 class Vote(db.Model):
     __table_name__ = 'vote'
     __table_args__ = (
@@ -198,6 +202,27 @@ class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     election_id = db.Column(db.Integer, nullable=False)
     account_id = db.Column(db.Integer, nullable=False)
+    candidate_id = db.Column(db.Integer, nullable=False)
+    state = db.Column(db.Boolean, nullable=False, default=False, doc='F:블록체인 서버 등록 대기, T: 등록 완료')
+    create_date = db.Column(db.DateTime, nullable=False)
+    destory_date = db.Column(db.DateTime, nullable=True)
+
+    def __init__(self, election_id, account_id, candidate_id):
+        self.election_id = election_id
+        self.account_id = account_id
+        self.candidate_id = candidate_id
+        self.state = VoteStatus.PENDING
+        self.create_date = datetime.now()
+        self.update_date = datetime.now()
+
+    def approve_vote(self):
+        self.state = VoteStatus.APPROVE
+
+    def is_approved(self):
+        return self.state == VoteStatus.APPROVE
+    
+    def is_destoryed(self):
+        return self.destroy_date is not None
 
 class AdminMessageBox(db.Model):
     __table_name__ = 'vote'
@@ -206,10 +231,12 @@ class AdminMessageBox(db.Model):
             'mysql_charset': 'utf8mb4',
             'mysql_engine': 'InnoDB'})
     
-    id = db.Column(db.Integer, primary_key=True)
-    election_id = db.Column(db.Integer, nullable=True)
-    admin_id=db.Column(db.String(64),nullable=True)
+    admin_id=db.Column(db.String(64), primary_key=True, nullable=False, autoincrement=False)
+    election_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=False)
     
+    def __init__(self, admin_id, election_id):
+        self.admin_id = admin_id
+        self.election_id = election_id
 
 class Msg(db.Model):
     __table_name__ = 'msg'
