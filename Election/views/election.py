@@ -134,11 +134,11 @@ def manageElection():
             add_election_voter_form.election.choices.append((election.id, '{0}({1})'.format(election.title, election.id)))
         
     page = request.args.get('page', type=int, default=1)
-    res_list = Election.query.filter(Election.endat >= now, Election.destroy_date==None).order_by(Election.create_date.asc())
+    res_list = Election.query.filter(Election.endat >= now, Election.destroy_date==None).order_by(Election.create_date.desc())
     res_list = res_list.paginate(page, per_page=4)
 
     page2 = request.args.get('page2', type=int, default=1)
-    end_list = Election.query.filter(Election.endat < now, Election.destroy_date==None).order_by(Election.create_date.asc())
+    end_list = Election.query.filter(Election.endat < now, Election.destroy_date==None).order_by(Election.create_date.desc())
     end_list = end_list.paginate(page2, per_page=4)
 
     return render_template('views/election/manage.html', res_list=res_list, end_list=end_list, form=form,
