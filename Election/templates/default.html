@@ -48,6 +48,9 @@
                     </li>
                     {% if is_admin_account() %}
                     <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('users_page.index') }}">유저관리</a>
+                    </li>
+                    <li class="nav-item">
                       <a class="nav-link" href="{{ url_for('election_page.manageElection') }}">선거관리</a>
                     </li>
                     {% endif %}

@@ -30,22 +30,49 @@ def index():
         return u'election doesn', 404
     return render_template('views/vote/index.html')
 
-@vote_page.route('/vote/<election_id>/<candidate_id>')
+@vote_page.route('/my_vote')
+@login_required
+@permission_user.require(http_exception=403)
+def my_vote():
+    election_id = request.args.get('election_id')
+    if election_id is None:
+        return u'election doesn\' exist.', 404
+    election_id = int(election_id)
+    election = Election.query.filter_by(election_id=election_id).scalar()
+    if election is None:
+        return u'election doesn\' exist.', 404
+
+    vote = BlockChainManager.instance().get_my_vote(election_id, current_user.id)
+    print(vote)
+    
+    return render_template('views/vote/my_vote.html')
+
+
+@vote_page.route('/vote')
 @permission_user.require(http_exception=403)
 def vote():
     acc = Account.query.filter_by(id=current_user.id).first()#type: Account
     if acc is None:
         return u"account doesn't exist", 400
 
-    election_id = request.form['election_id']
-    candidate_id = request.form['candidate_id']
+    election_id = int(request.form['election_id'])
+    candidate_id = int(request.form['candidate_id'])
     
     if Election.query.filter_by(id=election_id).scalar() is None:
         return u"election doesn't exist", 400
     
-    #if Candidate.query.filter_by()
+    if Candidate.query.filter_by(election_id=election_id, candidate_id=candidate_id).scalar() is None:
+        return u"candidate doesn't exist", 400
     
-    print(acc.private_key)
     status = BlockChainManager.instance().voting_to_blockchain_server(election_id, acc, candidate_id)
     print(status)
     return render_template('views/vote/index.html')
+
+@vote_page.route('/vote/result')
+@permission_user.require(http_exception=403)
+def get_result():
+    election_id = int(request.form['election_id'])
+    result = BlockChainManager.instance().get_vote_result(election_id)
+    print(result)
+
+    return render_template('views/vote/result.html')

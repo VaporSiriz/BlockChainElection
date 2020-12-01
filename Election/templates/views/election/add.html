@@ -20,6 +20,10 @@
                     {{ form.desc(class="form-control", placeholder="선거 내용") }}
                 </div>
                 <div class="form-group col align-self-center">
+                    {{ form.img_file.label("메인 이미지") }}
+                    {{ form.img_file(class="form-control") }}
+                </div>
+                <div class="form-group col align-self-center">
                     {{ form.startat.label("시작 시간") }}
                     {{ form.startat(class="form-control") }}
                 </div>

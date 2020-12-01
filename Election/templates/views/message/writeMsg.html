@@ -63,7 +63,7 @@
 <tr><td><input type="text"  name="title" placeholder="title"/></td>
   <td> <select id="dropbt" name="selected">
     {% for ml in data %}
-    <option value={{ml}}>{{ml}}</a>
+    <option value={{ml}}>({{ml}}){{ election_titles[ml] }}</a>
     {% endfor %}
 </select></td>
 <td> <textarea name="content" cols="80%" rows="10" placeholder="메시지 작성"></textarea></td>

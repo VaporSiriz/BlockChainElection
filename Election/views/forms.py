@@ -19,6 +19,7 @@ class ManageElectionForm(Form):
 class AddElectionForm(Form):
     title = StringField('title', validators=[validators.InputRequired()])
     desc = StringField('desc', validators=[validators.InputRequired()])
+    img_file = FileField('img_file')
     startat = DateTimeLocalField('startat', validators=[validators.InputRequired()], format='%Y-%m-%dT%H:%M')
     endat = DateTimeLocalField('endat', validators=[validators.InputRequired()], format='%Y-%m-%dT%H:%M')
 

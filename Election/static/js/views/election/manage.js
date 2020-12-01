@@ -57,7 +57,7 @@ $(function() {
         }
     });
 
-    $("#startbtn").click(function(){
+    $(".startbtn").click(function(){
         var election_id = $(this).data("election-id");
         var result = confirm("지금 투표를 시작하시겠습니까?");
         if(result){
@@ -82,7 +82,7 @@ $(function() {
         }
     });
 
-    $("#endbtn").click(function(){
+    $(".endbtn").click(function(){
         var election_id = $(this).data("election-id");
         var result = confirm("지금 투표를 종료하시겠습니까?");
         if(result){
@@ -110,7 +110,7 @@ $(function() {
         }
     });
     
-    $("#destroybtn").click(function(){
+    $(".destroybtn").click(function(){
         var election_id = $(this).data("election-id");
         var result = confirm("해당 선거를 삭제하시겠습니까?");
         if(result){

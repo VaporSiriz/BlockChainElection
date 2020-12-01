@@ -15,7 +15,6 @@ import json
 
 # BLockChainManager는 Singleton으로 생성
 class BlockChainManager(SingletonInstane):
-#    def __init__(self, app):
 
     def init_app(self, app):
         self._app = app
@@ -23,7 +22,7 @@ class BlockChainManager(SingletonInstane):
         self.blockchain_url = app.config['BLOCKCHAINURL']
         self.blockchain_number = app.config['BLOCKCHAINNUMBER']
         self.url_format = app.config['BLOCKCHAINFORMAT']
-        #self.blockchain_urls = app.config['EC2BLOCKCHAINURL']
+        #self.blockchain_urls = app.config['EC2BLOCKCHAINURL'] # 클라우드 instance로 올려서 사용할 때.
         self._semaphore = threading.Semaphore(1)
 
     def get_blockchain_server_with_rand(self):
@@ -39,10 +38,13 @@ class BlockChainManager(SingletonInstane):
                             'candidate_id': candidate_id,
                             'signature': transaction.generate_signature()
                           }))
-        print('data : ', data)
+
+        """ 순서 : transactions -> mining -> sync -> delete extra transactions
+            원래는 블록체인 서버끼리 이 작업을 해야하나 구현의 문제가 있어 클라쪽 서버에서 일련의 과정을
+            모두 실행.
+        """
         rand_num = self.get_blockchain_server_with_rand()
         url = self.url_format.format(self.blockchain_url, rand_num, 'transactions')
-        print('url : ', url)
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         rsp = requests.post(url, data, headers=headers)
         if rsp.status_code == 201:
@@ -58,13 +60,28 @@ class BlockChainManager(SingletonInstane):
                     sleep(1)
                     url = self.url_format.format(self.blockchain_url, rand_num, 'transactions')
                     rsp = requests.delete(url)
-                    print(rsp)
                 return True
         return False
 
+    def get_my_vote(self, election_id, account_address):
+        params = {'election_id': election_id, 'account_address': account_address}
+        for i in range(1, self.blockchain_number+1):
+            url = self.url_format.format(self.blockchain_url, i, 'get_vote')
+            rsp = requests.get(url)
+            json.append(rsp.json)
+            print(rsp.json)
+        return json
+
     def get_vote_result(self, election_id):
         params = {'election_id': election_id}
-        rand_num = self.get_blockchain_server_with_rand()
-        url = self.url_format.format(self.blockchain_url, rand_num, 'result')
+        json = []
+        for i in range(1, self.blockchain_number+1):
+            url = self.url_format.format(self.blockchain_url, i, 'result')
+            rsp = requests.get(url)
+            json.append(rsp.json)
+            print(rsp.json)
+        return json
+
+            
     
     

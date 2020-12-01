@@ -1,7 +1,7 @@
 from datetime import datetime
  
 from flask import Flask, render_template
-from views import login, vote, index, election, message, register
+from views import login, vote, index, election, message, register, users
 from models import db, db_commit, db_end
 from login_manager import login_manager, principals
 from flask_util_js import FlaskUtilJs
@@ -20,6 +20,7 @@ app.register_blueprint(register.register_page, url_prefix='/register')
 app.register_blueprint(vote.vote_page, url_prefix='/vote')
 app.register_blueprint(message.message_page, url_prefix='/message')
 app.register_blueprint(election.election_page, url_prefix='/election')
+app.register_blueprint(users.users_page, url_prefix='/users')
 
 #debugpy.listen(("0.0.0.0", 5678))
 

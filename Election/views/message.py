@@ -32,8 +32,6 @@ def msglist():
     l=len(result)
 
     return render_template('views/message/managerMsglist.html',data=result,l=l)
-   
-
 
 @message_page.route('/detailMsg')
 def detailMsg():
@@ -62,9 +60,13 @@ def writeMsg():
     admin_id=current_user.id#세션에서 얻어오기
     isadmin=AdminMessageBox.query.filter_by(admin_id=admin_id).all()
     data=[]
+    election_titles = {}
     for i in isadmin:
         data.append(i.election_id)
-    return render_template('views/message/writeMsg.html',data=data)
+        ele = Election.query.filter_by(id=i.election_id).first()
+        election_titles[i.election_id] = ele.title
+    return render_template('views/message/writeMsg.html', data=data, 
+                            election_titles=election_titles)
 
 #@permission_admin.require(http_exception=403)
 @message_page.route('/addMsg',methods=['POST'])

@@ -12,9 +12,34 @@ election_page = Blueprint('election_page', __name__, template_folder='templates'
 @election_page.route('/')
 def index():
     now = datetime.now()
-    startElections = Election.query.filter(Election.destroy_date==None).filter(Election.startat <= now).filter(Election.endat > now).all()
-    endElections = Election.query.filter(Election.destroy_date==None).filter(Election.endat <= now).all()
-    return render_template('views/election/index.html', startElections=startElections, endElections=endElections)
+    active_elections1 = Election.query.filter(Election.startat <= now, now < Election.endat, Election.destroy_date==None).limit(3).offset(0).all()
+
+    active_elections2 = Election.query.filter(Election.startat <= now, now < Election.endat, Election.destroy_date==None).limit(3).offset(3).all()
+    
+    dead_elections1 = Election.query.filter(Election.endat <= now, Election.destroy_date==None).limit(3).offset(0).all()
+        
+    dead_elections2 = Election.query.filter(Election.endat <= now, Election.destroy_date==None).limit(3).offset(3).all()
+    
+    active_votes = {}
+    dead_votes = {}
+    for election in active_elections1+active_elections2:
+        vote = {}
+        vote['whole_of_vote'] = Voters.query.filter_by(election_id=election.id).count()
+        vote['num_of_vote'] = Vote.query.filter_by(election_id=election.id).count()
+        active_votes[election.id] = vote
+    
+    for election in dead_elections1+dead_elections2:
+        vote = {}
+        vote['whole_of_vote'] = Voters.query.filter_by(election_id=election.id).count()
+        vote['num_of_vote'] = Vote.query.filter_by(election_id=election.id).count()
+        dead_votes[election.id] = vote
+
+    return render_template('views/election/index.html', active_elections1=active_elections1,
+                                                        active_elections2=active_elections2,
+                                                        dead_elections1=dead_elections1,
+                                                        dead_elections2=dead_elections2,
+                                                        active_votes=active_votes,
+                                                        dead_votes=dead_votes)
 
 @election_page.route('/tlist')
 def tlist():
@@ -32,10 +57,40 @@ def tlist():
 
     return render_template('views/election/tlist.html', startElections=startElections, waitElections=waitElections, endElections=endElections)
 
-@election_page.route('/voter_list')
-def voter_list():
+@election_page.route('/<int:election_id>/voter_list')
+def voter_list(election_id):
     
-    return render_template('views/election/voterlist.html')
+    election_id = int(election_id)
+
+    election = Election.query.filter_by(id=election_id).first()
+    if election is None:
+        return '', 403
+
+    candidates = Candidate.query.filter_by(election_id=election_id, ).all()
+    
+
+    return render_template('views/election/voterlist.html', election=election,
+                                                            candidates=candidates)
+
+@election_page.route('/<int:election_id>/candidate')
+def apply_candidate(election_id):
+    election_id = int(election_id)
+
+    election = Election.query.filter_by(id=election_id).first()
+    if election is None:
+        return '', 403
+
+    try:
+        candidate = Candidate(election_id, current_user.id)
+        db_add(candidate)
+        db_flush()
+    except Exception as ex:
+        print('ex : ', ex)
+        db_rollback()
+        return '', 400
+
+    return '', 200
+
 
 @election_page.route('/detail')
 def detail():
@@ -46,21 +101,23 @@ def detail():
 @election_page.route('/add', methods=['GET', 'POST'])
 def addElection():
     form = AddElectionForm(request.form)
+    now = datetime.now()
     print("form['startat'].data : ", form['startat'].data)
     print("form['endat'].data : ", form['endat'].data)
     if form.validate():
+        if form['startat'].data <= now:
+            return u'start date is less than now.', 400
         if form['startat'].data >= form['endat'].data:
-            return '', 400
-        election = Election(form['title'].data, form['desc'].data, form['startat'].data, form['endat'].data)
+            return u'start date is greater than end date.', 400#csv_name = add_election_voter_form.csv_file.name
+        election = Election(form['title'].data, form['desc'].data, form.img_file.data, form['startat'].data, form['endat'].data)
         db.session.add(election)
-        db.session.flush()
+        db_flush()
 
-        el = Election.query.filter_by(title=form['title'].data).filter_by(desc=form['desc'].data).filter_by().filter_by(startat=form['startat'].data).filter_by(endat=form['endat'].data).first()
-        
-        adminbox=AdminMessageBox(el.id, current_user.id)
+        # 임시 예측 땜빵 코드
+        predict_election_id = Election.query.order_by(Election.id.desc()).first().id + 1
+        adminbox=AdminMessageBox(current_user.id, predict_election_id)
         db.session.add(adminbox)
-        db.session.commit()
-
+        db_flush()
 
         return redirect(url_for('election_page.manageElection'))
     return render_template('views/election/add.html', form=form)

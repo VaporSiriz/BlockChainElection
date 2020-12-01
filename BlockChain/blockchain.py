@@ -165,7 +165,7 @@ class BlockChain(SingletonInstane):
 
         return True
 
-    def check_vote(self, election_id, account_address):
+    def get_vote(self, election_id, account_address):
         candidate_id = 0
         for block in self.chain:
             for transaction in block['transactions']:
@@ -232,3 +232,7 @@ class BlockChain(SingletonInstane):
 
         logger.info({'action': 'resolve_conflicts', 'status': 'not_replaced'})
         return False
+
+    def is_there_vote(self, election_id, user_address):
+        return self.get_vote(election_id, user_address) != 0
+            

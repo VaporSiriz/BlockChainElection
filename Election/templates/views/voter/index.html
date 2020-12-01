@@ -332,7 +332,8 @@
     });
     $(function(){
         $('.card-btn').click(function(){
-            location.href="./voter.html";
+            //location.href="./voter.html";
+            location.href="{{ url_for('election_page.voter_list') }}"
         })
     })
 </script>
