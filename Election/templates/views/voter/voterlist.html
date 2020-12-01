@@ -180,6 +180,50 @@
                         </div>
                     </div>
             </div>
+            <div class="card_h voter-card_h">
+                <div class="card-body_h">
+                    <h5 class="card-title">김경수 후보</h5>
+                    <div class="card-img_h">
+                        <img src="{{ url_for('static', filename='hj/images/kks.jpg') }}" alt="3번 후보자"/>
+                    </div>
+                    <div class="voter-btn-con_h">
+                        <div class="voter-btn-first-row">
+                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#modal5">공약</button>
+                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#modal6">경력</button>
+                        </div>
+                        <button type="button" class="btn btn-dark btn-detail">상세보기</button>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modal5" tabindex="-1" aria-labelledby="modal5Label" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal5Label">김경수 후보 공약</h5>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                        </div>
+                        <div class="modal-body">
+                                <img src="{{ url_for('static', filename='hj/images/pledge3.jpg') }}"/>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="modal6" tabindex="-1" aria-labelledby="modal6Label" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal6Label">김경수 후보 경력</h5>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                        </div>
+                        <div class="modal-body">
+                                <img src="{{ url_for('static', filename='hj/images/career3.jpg') }}"/>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+        </div>
         </div>
         <button class="btn vote-btn">투표하기</button>
     </section>
