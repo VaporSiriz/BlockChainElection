@@ -1,0 +1,21 @@
+{% extends "default.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+<div>
+    <h1>Login</h1>
+    <div>
+        <form id="loginForm" method="POST" action="{{ url_for('login_page.login') }}">
+            <label>ID</label>
+            {{ form.username(class="form-control") }}<br>
+            <label>Password</label>
+            {{ form.password(class="form-control") }}<br>
+            <button id="btn_login">Send</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+	<script src="{{ url_for('static', filename='js/views/login/index.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,383 @@
+/* 모바일용 CSS */
+/* 기본 CSS */
+#wrap{
+	display:flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	margin: auto;
+}
+#wrap>section{
+	width: 100%;
+}
+.navbar_h{
+	background-color: black;
+    min-height: auto;
+    height: 35px;
+	width: 100%;
+}
+.nav_h{
+	float: right;
+	height: 100%;
+    display: flex;
+    justify-content: space-between;
+    width: 22%;
+    margin-right: 2%;
+}
+.nav_h>li{
+	float: left;
+	height: 100%;
+    display: flex;
+    align-items: center;
+}
+.nav_h>li>a{
+	color : white;
+}
+.content-header_h{
+	text-align: center;
+    margin: 30px 0;
+}
+.content-header_h>h2 {
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+.voter-content_h{
+    text-align: center;
+}
+.tab-bar{
+    width: 60%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+}
+.tab-bar>button:first-child{
+	margin-right: 5px;
+}
+.tab-bar>button{
+	width: 49%;
+	color: black;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+.tab-menu_h:active, .tab-menu_h:focus, .tab-menu_h:hover{
+	color: black;
+}
+.update-btn:active, .update-btn:focus, .update-btn:hover{
+	color: black;
+}
+.container-main_h{
+	width: 100%;
+	background-color: #eeeeee;
+	margin: 15px 0;
+}
+.container-vote_h{
+	display: flex;
+}
+.carousel{
+    padding: 40px 5%;
+    margin: 0 5%;
+}
+
+.card{
+    width: 30%;
+	display: flex;
+	margin: auto;
+    flex-direction: column;
+    padding: 20px;
+	border-radius: 5px;
+	background-color: white;
+    height: 430px;
+}
+.card>img{
+	width: 100%;
+    height: 55%;
+}
+.card-body{
+    margin: 25px 5px 0px;
+}
+.card-body>*{
+	margin-bottom: 10px;
+}
+.card-title{
+    font-size: 1.2rem;
+	font-weight: 600;
+}
+.card-text{
+    line-height: 150%;
+}
+.btn{
+	outline: none!important;
+}
+.btn-con_h{
+    display: flex;
+	justify-content: space-between;
+	margin-top:10px;
+}
+.btn-con_h>.btn-warning{
+	width: 43%;
+}
+.btn-share{
+	width: 10%;
+    display: flex;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+}
+.controls-bottom{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    left: 0;
+}
+.popover-content{
+	z-index: 1;
+}
+.carousel-inner{
+	overflow: visible;
+}
+.form-content_h>form{
+    width: 25%;
+	padding: 20px;
+	margin: auto;
+}
+.selected-carousel-con{
+	display: block;
+}
+.carousel-con{
+	display: none;
+}
+
+/* modify.html */
+
+.update-btn{
+	width: 100%;
+}
+.form-group label{
+	margin-bottom: 8px;
+}
+.form-group{
+    padding-bottom: 15px;
+    border-bottom: 1px dashed lightgray;
+	margin-bottom: 15px;
+}
+.update-btn{
+	color: black;
+}
+
+/* voter.html */
+.voter-content_h{
+	width: 100%;
+}
+.card_h{
+	margin: auto;
+	border-radius: 10px;
+	border:1px solid lightgray;
+}
+.description-card_h{
+	width: 60%;
+}
+.card-body_h{
+	padding: 25px;
+}
+.card-body_h>*{
+	display: flex;
+	margin-bottom: 10px;
+}
+.card-body_h>div>p{
+	margin-right: 5px;
+	font-weight: 600;
+}
+.card-subtitle{
+	align-items: center;
+}
+.card-subtitle>button{
+	margin-right: 10px;
+    width: 90px;
+    flex-shrink: 0;
+}
+.voter-header_h{
+    background-color: #FFC001;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+.voter-header_h>h2{
+	font-weight: 600;
+}
+.voter-btn-con_h{
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+.voter-btn-first-row{
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+.voter-btn-first-row>button{
+	width: 49%;
+}
+.voter-card_h{
+	width: 30%;
+    margin: 0 3% 20px 0;
+}
+.voter-card_h:hover{
+	cursor: pointer;
+}
+.voter-card_h>.card-body_h{
+    display: flex;
+    flex-direction: column;
+	align-items: center;
+	width: 100%;
+    padding: 12px 25px;
+}
+.voter-container_h{
+    width: 80%;
+    margin: 20px auto;
+    display: flex;
+	flex-wrap: wrap;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    max-height: 470px;
+}
+.btn-dark{
+	background-color: rgb(46, 46, 46);
+	color: white;
+}
+.btn-dark:active, .btn-dark:focus, .btn-dark:hover{
+	background-color: rgb(27, 27, 27);
+	color: white;
+}
+.modal-header{
+	display: flex;
+	justify-content: space-between;
+    align-items: center;
+}
+.modal-title{
+	font-size: 1.2rem;
+    font-weight: 600;
+}
+.modal-body{
+	display: flex;
+	justify-content: center;
+}
+.modal-body>img{
+	width: 100%;
+}
+.card-img_h>img{
+    height: 300px;
+	max-width: 100%;
+}
+.apply-voter{
+    position: absolute;
+	right: 13%;
+}
+.vote-btn{
+    margin-bottom: 20px;
+    width: 150px;
+    background-color: #ffc001;
+    font-size: 1.3rem;
+	font-weight: 600;
+}
+.vote-btn:hover{
+	background-color: #ffa000;
+}
+.selected-voter{
+    border: 8px solid #79c779;
+}
+
+
+/* detail.html */
+
+.detail-content_h{
+	width: 80%!important;
+    margin-bottom: 30px;
+}
+.detail-contents-con_h{
+	display: flex;
+	align-items: flex-start;
+    padding-top: 25px;
+    border-top: 1px solid lightgray;
+}
+.detail-table{
+    width: 35%;
+}
+table * {
+    border: 1px solid #ababab;
+}
+th{
+    background-color: #dcdcdc;
+    font-size: 1.1rem;
+	font-weight: 600;
+}
+.profile-contents-con_h{
+    display: flex;
+    flex-direction: column;
+	width: 30%;
+	padding-right: 10px;
+	border-right: 1px dashed gray;
+}
+.profile-con{
+    display: flex;
+    flex-direction: row;
+}
+.profile-con img {
+	width: 100%;
+}
+.profile-con>div{
+	border: 3px solid white;
+}
+.more{
+	flex: 1;
+	background-color: rgb(196, 196, 196);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.more:hover{
+	cursor: pointer;
+	font-weight: 600;
+	background-color: rgb(160, 160, 160);
+}
+.profile-col{
+	display: flex;
+	flex-direction: column;
+}
+.carrer-con_h{
+	width: 70%;
+	padding : 0 20px;
+	display: flex;
+}
+.carrer-img-con_h{
+	width: 32%;
+}
+.carrer-img-con_h img{
+	width: 100%;
+}
+.carrer-des-con_h{
+	width: 68%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.carrer{
+	list-style: circle!important;
+    margin-left: 50px;
+}
+.carrer>li{
+	list-style: circle!important;
+	font-size: 1.1rem;
+	line-height: 150%;
+}
+.carrer>.highlight{
+	font-size: 1.4rem;
+	font-weight: 600;
+    color: #4242ad;
+}
+.delete-hide{
+	margin: 20px 0;
+}

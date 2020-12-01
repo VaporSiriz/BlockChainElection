@@ -1,0 +1,12 @@
+{% extends "default.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+<div style="align-content: center;">
+    <form action="createRoom" method="post">
+        <input type="text" name="roomName"/>
+        <input type="submit"/>
+    </form>
+</div>
+{% endblock %}
