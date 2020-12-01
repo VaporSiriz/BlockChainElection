@@ -1,0 +1,36 @@
+{% extends "default.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}			
+<div class="container mt-5" style="text-align: center">
+	<h1 style="text-align: left;">수신자 목록</h1>
+	<table class="table table-bordered table-sm mt-3">
+		<thead>
+		  <tr>
+					<td colspan="5" align="right"> 총 참여자 수 : <b>{{l}}</b>명
+			 
+				</tr>
+			<tr class="bg-dark" style="color: white">
+				<th>수신자 아이디</th>	<th>수신자 이름</th>
+			</tr>
+		</thead>
+		<tbody>
+
+
+			<tbody>
+
+
+{% for ml in data %}
+<tr>
+<td>{{ml.id}}</td><td>{{ml.username}}</td>
+
+
+
+</tr>
+
+ {% endfor %}
+      </tbody>
+  </table>
+</div>
+{% endblock %}

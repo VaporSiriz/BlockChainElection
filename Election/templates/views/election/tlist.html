@@ -1,0 +1,56 @@
+{% extends "default.html" %}
+{% block title %}{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+
+<div class="container mt-5" style="text-align: center">
+    <h1 style="text-align: left;">선거 목록</h1>
+    <table class="table table-bordered table-sm mt-5">
+        <thead>
+            <tr class="bg-dark" style="color: white">
+                <th scope="col">선거 이름</th>
+                <th scope="col">선거 내용</th>
+                <th scope="col">시작 시간</th>
+                <th scope="col">종료 시간</th>
+                <th scope="col">참여/결과</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for election in startElections %}
+            <tr>
+                <td>{{ election.title }}</td>
+                <td>{{ election.desc }}</td>
+                <td>{{ election.startat }}</td>
+                <td>{{ election.endat }}</td>
+                <td>
+                    <button type="button" class="btn btn-dark btn-sm">참여하기</button>
+                </td>
+            </tr>
+            {% endfor %}
+            {% for election in waitElections %}
+            <tr>
+                <td>{{ election.title }}</td>
+                <td>{{ election.desc }}</td>
+                <td>{{ election.startat }}</td>
+                <td>{{ election.endat }}</td>
+                <td>
+                    투표 시작 전입니다!
+                </td>
+            </tr>
+            {% endfor %}
+            {% for election in endElections %}
+            <tr>
+                <td>{{ election.title }}</td>
+                <td>{{ election.desc }}</td>
+                <td>{{ election.startat }}</td>
+                <td>{{ election.endat }}</td>
+                <td>
+                    <button type="button" class="btn btn-dark btn-sm">결과보기</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

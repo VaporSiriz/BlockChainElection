@@ -2,31 +2,65 @@ from flask import Flask
 from flask import jsonify
 from flask import request
 
-import blockchain
+from blockchain import BlockChain
 import wallet
+import urllib
+import threading
+import requests
+import asyncio
+import json
 
+BLOCKCHAIN_NEIGHBOURS_SYNC_TIME_SEC = 5
 
 app = Flask(__name__)
 cache = {}
 
+def init_app():
+    app.config.from_object('default_config')
+    for logger in app.config.get('LOGGERS', ()):
+        app.logger.addHandler(logger)
 
-def get_blockchain():
-    cached_blockchain = cache.get('blockchain')
-    if not cached_blockchain:
-        miners_wallet = wallet.Wallet()
-        cache['blockchain'] = blockchain.BlockChain(
-            blockchain_address=miners_wallet.blockchain_address,
-            port=app.config['port'])
-        app.logger.warning({
-            'private_key': miners_wallet.private_key,
-            'public_key': miners_wallet.public_key,
-            'blockchain_address': miners_wallet.blockchain_address})
-    return cache['blockchain']
+    BlockChain.instance().init_blockchain(app, app.config['BLOCKCHAINURLS'])
 
+    return app
+
+@app.route('/health_check_other_machine', methods=['GET'])
+def health_check_other_machine():
+    for url in app.config['BLOCKCHAINURLS']:
+        url = app.config['BLOCKCHAINURLFORMAT'].format(url, 'status')
+        print('url : ', url)
+        try:
+            response = requests.get(url, timeout=3)
+            if response.status_code == 200:
+                print('1 : 200')
+            
+        except Exception as ex:
+            print('ex : ', ex)
+    return '', 200
+
+# def get_blockchain():
+#     #cached_blockchain = cache.get('blockchain')
+#     BlockChain.instance().init_blockchain(app, app.config['BLOCKCHAINURLS'])
+#     if not cached_blockchain:
+#         #cache['blockchain'] = BlockChain.BlockChain(app, app.config['BLOCKCHAINURLS'])
+#         BlockChain.instance().init_blockchain(app, app.config['BLOCKCHAINURLS'])
+#         app.logger.warning({})
+#     return cache['blockchain']
+
+@app.route('/status', methods=['GET'])
+def status():
+
+    return 'OK', 200
+
+@app.route('/health_check', methods=['GET'])
+def health_check():
+    return 'OK', 200
 
 @app.route('/chain', methods=['GET'])
 def get_chain():
-    block_chain = get_blockchain()
+    #block_chain = get_blockchain()
+    block_chain = BlockChain.instance()
+    print('block_chain.chain : ', block_chain.chain)
     response = {
         'chain': block_chain.chain
     }
@@ -35,9 +69,11 @@ def get_chain():
 
 @app.route('/transactions', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def transaction():
-    block_chain = get_blockchain()
+    #block_chain = get_blockchain()
+    block_chain = BlockChain.instance()
     if request.method == 'GET':
         transactions = block_chain.transaction_pool
+        print('transactions : ', transactions)
         response = {
             'transactions': transactions,
             'length': len(transactions)
@@ -46,20 +82,27 @@ def transaction():
 
     if request.method == 'POST':
         request_json = request.json
+        print(request_json)
+
         required = (
-            'sender_blockchain_address',
-            'recipient_blockchain_address',
-            'value',
-            'sender_public_key',
+            'account_address',
+            'account_public_key',
+            'candidate_id',
+            'election_id',
             'signature')
         if not all(k in request_json for k in required):
             return jsonify({'message': 'missing values'}), 400
 
+        vote_check = block_chain.is_there_vote(request_json['election_id'],
+                                               request_json['account_address'])
+        if vote_check is True:
+            return jsonify({'message': 'there is vote.'}), 400
+
         is_created = block_chain.create_transaction(
-            request_json['sender_blockchain_address'],
-            request_json['recipient_blockchain_address'],
-            request_json['value'],
-            request_json['sender_public_key'],
+            request_json['account_address'],
+            request_json['account_public_key'],
+            request_json['candidate_id'],
+            request_json['election_id'],
             request_json['signature'],
         )
         if not is_created:
@@ -67,21 +110,22 @@ def transaction():
         return jsonify({'message': 'success'}), 201
 
     if request.method == 'PUT':
+        print('put transactions')
         request_json = request.json
         required = (
-            'sender_blockchain_address',
-            'recipient_blockchain_address',
-            'value',
-            'sender_public_key',
+            'account_address',
+            'account_public_key',
+            'candidate_id',
+            'election_id',
             'signature')
         if not all(k in request_json for k in required):
             return jsonify({'message': 'missing values'}), 400
-
+        print('add_transaction')
         is_updated = block_chain.add_transaction(
-            request_json['sender_blockchain_address'],
-            request_json['recipient_blockchain_address'],
-            request_json['value'],
-            request_json['sender_public_key'],
+            request_json['account_address'],
+            request_json['account_public_key'],
+            request_json['candidate_id'],
+            request_json['election_id'],
             request_json['signature'],
         )
         if not is_updated:
@@ -89,50 +133,53 @@ def transaction():
         return jsonify({'message': 'success'}), 200
 
     if request.method == 'DELETE':
-        block_chain.transaction_pool = []
+        BlockChain.transaction_pool = []
         return jsonify({'message': 'success'}), 200
-
 
 @app.route('/mine', methods=['GET'])
 def mine():
-    block_chain = get_blockchain()
+    #block_chain = get_blockchain()
+    block_chain = BlockChain.instance()
     is_mined = block_chain.mining()
     if is_mined:
         return jsonify({'message': 'success'}), 200
     return jsonify({'message': 'fail'}), 400
 
-
-@app.route('/mine/start', methods=['GET'])
-def start_mine():
-    get_blockchain().start_mining()
-    return jsonify({'message': 'success'}), 200
-
+@app.route('/resolve_conflicts', methods=['GET'])
+def resolve_conflicts():
+    #block_chain = get_blockchain()
+    block_chain = BlockChain.instance()
+    block_chain.resolve_conflicts()
+    return 'ok', 200
 
 @app.route('/consensus', methods=['PUT'])
 def consensus():
-    block_chain = get_blockchain()
+    #block_chain = get_blockchain()
+    block_chain = BlockChain.instance()
     replaced = block_chain.resolve_conflicts()
     return jsonify({'replaced': replaced}), 200
 
+@app.route('/mining', methods=['GET'])
+def mining():
+    #block_chain = get_blockchain()
+    block_chain = BlockChain.instance()
+    replaced = block_chain.mining()
+    return jsonify({'replaced': replaced}), 200
 
-@app.route('/amount', methods=['GET'])
-def get_total_amount():
-    blockchain_address = request.args['blockchain_address']
+
+@app.route('/get_vote', methods=['GET'])
+def get_vote():
+    election_id = int(request.args['election_id'])
+    account_address = request.args['account_address']
+    
     return jsonify({
-        'amount': get_blockchain().calculate_total_amount(blockchain_address)
+        'candidate_id': BlockChain.instance().get_vote(election_id, account_address)
     }), 200
 
-
-if __name__ == '__main__':
-    from argparse import ArgumentParser
-    parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000,
-                        type=int, help='port to listen on')
-    args = parser.parse_args()
-    port = args.port
-
-    app.config['port'] = port
-
-    get_blockchain().run()
-
-    app.run(host='0.0.0.0', port=port, threaded=True, debug=True)
+@app.route('/result', methods=['GET'])
+def get_result():
+    election_id = int(request.args['election_id'])
+    return jsonify({
+        #'data': get_blockchain().calculate_total_amount(election_id)
+        'data': BlockChain.instance().calculate_result(election_id)
+    }), 200

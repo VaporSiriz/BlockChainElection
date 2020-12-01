@@ -4,10 +4,17 @@
 {% endblock %}
 {% block content %}
 <div style="align-content: center;">
+    {% if is_user_account() %}
+    user account
+    {% elif is_admin_account() %}
+    admin account
+    {% endif %}
     <h1>BLockChain Election</h1>
     <h1>BLockChain Election</h1>
     <h1>BLockChain Election</h1>
     <h1>BLockChain Election</h1>
-    
+    {% if current_user.is_authenticated %}
+        Hi {{ current_user.username }}!
+    {% endif %}
 </div>
 {% endblock %}

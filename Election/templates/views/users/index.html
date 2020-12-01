@@ -1,0 +1,68 @@
+{% extends "default.html" %}
+{% block title %}유저 목록{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+
+<div class="container mt-5" style="text-align: center">
+    <h1 style="text-align: left;">유저 목록</h1>
+    <table class="table table-bordered table-sm mt-3">
+        <sthead>
+            <tr class="bg-dark" style="color: white">
+                <th scope="col">ID</th>
+                <th scope="col">이름</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acc in accounts.items %}
+            <tr>
+                <td>{{ acc.id }}</td>
+                <td>{{ acc.username }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <ul class="pagination justify-content-center">
+        <!-- 이전페이지 -->
+        {% if accounts.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ accounts.prev_num }}">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+        {% for page_num in accounts.iter_pages() %}
+        {% if page_num %}
+        {% if page_num != accounts.page %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+        </li>
+        {% else %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{ page_num }}</a>
+        </li>
+        {% endif %}
+        {% else %}
+        <li class="disabled">
+            <a class="page-link" href="#">...</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+        <!-- 다음페이지 -->
+        {% if accounts.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ accounts.next_num }}">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

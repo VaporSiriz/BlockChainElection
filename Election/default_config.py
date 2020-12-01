@@ -9,7 +9,7 @@ DEVELOPMENT = True
 db_url = os.getenv("DB_URL", "127.0.0.1")
 db_name = os.getenv("DB_NAME", "election")
 db_user = os.getenv("DB_USER", "root")
-db_password = os.getenv("DB_PASSWORD", "1234")
+db_password = os.getenv("DB_PASSWORD", "rootpassword")
 SQLALCHEMY_DATABASE_URI = 'mysql://{0}:{1}@{2}/{3}'.format(db_user, db_password, db_url, db_name)
 SQLALCHEMY_POOL_RECYCLE = 60 * 5
 SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -24,6 +24,8 @@ file_handler = logging.handlers.TimedRotatingFileHandler(
 file_handler.setFormatter(formatter)
 
 LOGGERS = [file_handler]
-
-BlockChainUrl = os.getenv("BlockChain_URL", "127.0.0.1")
-BlockChainPorts = range(5000, 5003)# 5000:5003 번포트 사용
+BLOCKCHAINURL = os.getenv("BlockChainURL", "127.0.0.1")
+BLOCKCHAINNUMBER = int(os.getenv("BlockChainNumber", 0))
+BLOCKCHAINFORMAT = 'http://{0}{1}:5000/{2}'
+#BLOCKCHAINFORMAT = 'http://{0}/{1}'
+EC2BLOCKCHAINURL=[os.getenv("BlockChainURL1", None), os.getenv("BlockChainURL2", None), os.getenv("BlockChainURL3", None)]

@@ -1,0 +1,32 @@
+{% extends "default.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+
+<div class="container mt-5" style="text-align: center">
+  <h1 style="text-align: left;">받은 메시지</h1>
+  <table class="table table-bordered table-sm mt-3">
+      <thead>
+        <tr>
+  				<td colspan="5" align="right"> 총 내역 목록 : <b>{{l}}</b>개
+  			</tr>
+          <tr class="bg-dark" style="color: white">
+
+              	<th scope="col">메시지 제목</th>	<th scope="col">받은 시간</th>	
+              <th scope="col">보낸 선거방</th>  </tr>
+      </thead>
+      <tbody>
+          
+ {% for mlist in result %}
+ {% for ml in mlist %}
+<tr>
+ <td><a href="detailMsg?variable={{ml.id}}">{{ml.msgTitle}}</a></td>
+ <td>{{ml.sendedTime}}</td><td>{{ml.election_title}}</td>
+
+  {% endfor %}
+{% endfor %}
+      </tbody>
+  </table>
+</div>
+{% endblock %}
