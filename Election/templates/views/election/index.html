@@ -38,10 +38,16 @@
         <h1>한 표</h1>
     </section>
     <section class="vote-content_h">
-        <div class="tab-bar">
-            <button type="button" class="tab-menu_h btn btn-warning selected">진행 중인 투표</button>
-            <button type="button" class="tab-menu_h btn btn-secondary">종료 된 투표</button>
+        <div class="container">
+            <div class="tab-bar">
+                <button type="button" class="tab-menu_h btn btn-warning selected">진행 중인 투표</button>
+                <button type="button" class="tab-menu_h btn btn-secondary">종료 된 투표</button>
+            </div>
+            <div style="text-align: right;">
+                <a href="{{ url_for('election_page.tlist') }}">자세히 보기</a>
+            </div>
         </div>
+        <!-- <a href="{{ url_for('election_page.tlist') }}">자세히</a> -->
         <div class="container-main_h selected-carousel-con">
             <div id="multi-item-example" class="carousel slide" data-ride="carousel">
                 <!--Slides-->

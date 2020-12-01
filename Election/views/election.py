@@ -16,6 +16,22 @@ def index():
     endElections = Election.query.filter(Election.destroy_date==None).filter(Election.endat <= now).all()
     return render_template('views/election/index.html', startElections=startElections, endElections=endElections)
 
+@election_page.route('/tlist')
+def tlist():
+    now = datetime.now()
+    startElections = Election.query.filter(Election.destroy_date==None).filter(Election.startat <= now).filter(Election.endat > now).all()
+    waitElections = Election.query.filter(Election.destroy_date==None).filter(Election.startat > now).filter(Election.endat > now).all()
+    endElections = Election.query.filter(Election.destroy_date==None).filter(Election.endat <= now).all()
+
+    page = request.args.get('page', type=int, default=1)
+    elections = Election.query.filter(Election.destroy_date==None).order_by(Election.create_date.asc())
+    elections = elections.paginate(page, per_page=10)
+
+    for election in startElections:
+        print(election)
+
+    return render_template('views/election/tlist.html', startElections=startElections, waitElections=waitElections, endElections=endElections, elections=elections)
+
 @election_page.route('/voter_list')
 def voter_list():
     
