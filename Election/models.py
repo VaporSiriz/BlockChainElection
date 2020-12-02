@@ -184,9 +184,10 @@ class Candidate(db.Model):
             'mysql_charset': 'utf8mb4',
             'mysql_engine': 'InnoDB'})
 
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
-    election_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=False)
-    candidate_id = db.Column(db.Integer, nullable= False, primary_key=True, autoincrement=False)
+    election_id = db.Column(db.Integer, nullable=False)
+    candidate_id = db.Column(db.Integer, nullable= False)
     candidate_img = db.Column(db.String(256), nullable=True)
     pledge = db.Column(db.String(256), nullable=True)
     career = db.Column(db.String(256), nullable=True)
@@ -197,8 +198,7 @@ class Candidate(db.Model):
     create_date = db.Column(db.DateTime, nullable=True)
     update_date = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self, name, candidate_id, candidate_img, election_id, pledge, career, \
-                 profile_sub1, profile_sub2, profile_sub3, extra):
+    def __init__(self, name, candidate_id, candidate_img, election_id, pledge, career, profile_sub1, profile_sub2, profile_sub3, extra):
         self.name = name
         self.candidate_id = candidate_id
         self.election_id = election_id

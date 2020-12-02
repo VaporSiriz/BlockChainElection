@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, make_response, redirect, request
 from flask.helpers import url_for
 from models import *
-from .forms import AddCandidateForm, AddElectionForm, ManageElectionForm, ModifyElectionForm, AddElectionVoterForm
+from .forms import AddCandidateForm, AddElectionForm, ManageElectionForm, ModifyCandidateForm, ModifyElectionForm, AddElectionVoterForm
 from datetime import datetime, timedelta
 from login_manager import *
 from flask_login import login_user, login_required, current_user
@@ -261,18 +261,49 @@ def view_voters(election_id):
 @permission_admin.require(http_exception=403)
 @election_page.route('/mancandidate/<int:election_id>', methods=['GET', 'POST'])
 def man_candidate(election_id):
-    candidates = Candidate.query.filter(Candidate.election_id==election_id).order_by(Candidate.candidate_id.asc())
+    candidates = Candidate.query.filter_by(election_id=election_id).order_by(Candidate.candidate_id.asc())
     
     return render_template('views/election/mancandidate.html', candidates=candidates, election_id=election_id)
 
 @permission_admin.require(http_exception=403)
 @election_page.route('/addcandidate/<int:election_id>', methods=['GET', 'POST'])
 def add_candidate(election_id):
-    form = AddCandidateForm()
-    if form.validate(request.form):
-        print('감지')
-        candidate = Candidate(form['name'].data, form['candidate_id'].data, form.img_file.data, election_id)
+    form = AddCandidateForm(request.form)
+    if form.validate():
+        candidate = Candidate(form['name'].data, int(form['candidate_id'].data), form.candidate_img.data, int(election_id), form['pledge'].data, form['career'].data, form['profile_sub1'].data, form['profile_sub2'].data, form['profile_sub3'].data, form['extra'].data)
+
         db.session.add(candidate)
+        db.session.flush()
         db.session.commit()
         return redirect(url_for('election_page.man_candidate', election_id=election_id))
     return render_template('views/election/addcandidate.html', form=form)
+
+@permission_admin.require(http_exception=403)
+@election_page.route('/modcandidate/<int:id>', methods=['GET', 'POST'])
+def mod_candidate(id):
+    form = ModifyCandidateForm(request.form)
+    candidate = Candidate.query.get(id)
+    if form.validate():
+        candidate.name = form['name'].data
+        candidate.candidate_id = int(form['candidate_id'].data)
+        candidate.candidate_img = form.candidate_img.data
+        candidate.pledge = form['pledge'].data
+        candidate.career = form['career'].data
+        candidate.profile_sub1 = form['profile_sub1'].data
+        candidate.profile_sub2 = form['profile_sub2'].data
+        candidate.profile_sub3 = form['profile_sub3'].data
+        candidate.extra = form['extra'].data
+        db.session.commit()
+
+        return redirect(url_for('election_page.man_candidate', election_id=candidate.election_id))
+    return render_template('views/election/modcandidate.html', form=form, candidate=candidate)
+
+@permission_admin.require(http_exception=403)
+@election_page.route('/manage/delcandidate/<int:id>', methods=['POST', 'GET'])
+def del_candidate(id):
+    candidate = Candidate.query.get(id)
+    election_id = candidate.election_id
+    db.session.delete(candidate)
+    db.session.commit()
+
+    return redirect(url_for('election_page.man_candidate', election_id=election_id))

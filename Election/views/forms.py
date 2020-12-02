@@ -35,10 +35,22 @@ class AddElectionVoterForm(Form):
 
 class AddCandidateForm(Form):
     name = StringField('name', validators=[validators.InputRequired()])
-    symbolnum = StringField('symbolnum', validators=[validators.InputRequired()])
-    img_file = FileField('img_file')
+    candidate_id = StringField('candidate_id', validators=[validators.InputRequired()])
+    candidate_img = FileField('candidate_img')
+    pledge = StringField('pledge', validators=[validators.InputRequired()])
+    career = StringField('career', validators=[validators.InputRequired()])
+    profile_sub1 = FileField('candidate_img')
+    profile_sub2 = FileField('candidate_img')
+    profile_sub3 = FileField('candidate_img')
+    extra = StringField('extra', validators=[validators.InputRequired()])
 
-class ModCandidateForm(Form):
+class ModifyCandidateForm(Form):
     name = StringField('name', validators=[validators.InputRequired()])
-    symbolnum = StringField('symbolnum', validators=[validators.InputRequired()])
-    img_file = FileField('img_file')
+    candidate_id = StringField('candidate_id', validators=[validators.InputRequired()])
+    candidate_img = FileField('candidate_img')
+    pledge = StringField('pledge', validators=[validators.InputRequired()])
+    career = StringField('career', validators=[validators.InputRequired()])
+    profile_sub1 = FileField('candidate_img')
+    profile_sub2 = FileField('candidate_img')
+    profile_sub3 = FileField('candidate_img')
+    extra = StringField('extra', validators=[validators.InputRequired()])
