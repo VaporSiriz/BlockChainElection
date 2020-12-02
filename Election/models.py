@@ -171,14 +171,19 @@ class Voters(db.Model):
     def get_number_of_voters(election_id):
         return Voters.query.filter_by(election_id=election_id).count()
 
+    @staticmethod
+    def cert_voter(election_id, account_id):
+        voter = Voters.query.filter_by(election_id=election_id, account_id=account_id).scalar()
+        return voter is not None
+
 class Candidate(db.Model):
     __table_name__ = 'candidate'
     __table_args__ = (
         {'extend_existing': True,
             'mysql_charset': 'utf8mb4',
             'mysql_engine': 'InnoDB'})
- 
-    election_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    election_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=False)
+    candidate_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=False)
     account_id = db.Column(db.Integer, nullable=False)
     state = db.Column(db.Integer, nullable=False, server_default='0', doc='0:대기,1:취소,2:거절,3:승인')
     create_date = db.Column(db.DateTime, nullable=True)
