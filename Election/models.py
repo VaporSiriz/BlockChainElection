@@ -186,9 +186,9 @@ class Candidate(db.Model):
     create_date = db.Column(db.DateTime, nullable=True)
     update_date = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self, name, symbolnum, candidate_img, election_id):
+    def __init__(self, name, candidate_id, candidate_img, election_id):
         self.name = name
-        self.symbolnum = symbolnum
+        self.candidate_id = candidate_id
         self.election_id = election_id
         self.candidate_img = candidate_img
         self.create_date = datetime.now()

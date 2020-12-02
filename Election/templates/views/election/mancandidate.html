@@ -1,0 +1,49 @@
+{% extends "default.html" %}
+{% block title %}선거생성{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+
+<div class="container mt-5" style="text-align: center">
+    <h1 style="text-align: left;">후보자 관리</h1>
+    <table class="table table-bordered table-sm mt-3">
+        <thead>
+            <tr class="bg-dark" style="color: white">
+                <th scope="col">번호</th>
+                <th scope="col">후보자 이름</th>
+                <th scope="col">후보자 사진</th>
+                <th scope="col">기능</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>번호</td>
+                <td>이름</td>
+                <td>사진</td>
+                <td>
+                    <button type="button" class="btn btn-dark btn-sm endbtn">수정</button>
+                    <button type="button" class="btn btn-dark btn-sm endbtn">제거</button>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <button type="button" class="btn btn-dark btn-sm" onclick=location.href="{{ url_for('election_page.add_candidate', election_id=election_id) }}">추가</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="text-align: right;">
+        <button type="button" class="btn btn-dark btn-sm endbtn">확인</button>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block modals %}
+{% endblock %}
+
+{% block script %}
+{% endblock %}

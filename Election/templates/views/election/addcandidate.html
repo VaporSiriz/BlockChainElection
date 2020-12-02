@@ -1,0 +1,33 @@
+{% extends "default.html" %}
+{% block title %}선거생성{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5">
+        <h1>후보자 추가</h1>
+    </div>
+    <div class="row mt-5">
+        <div class="col-10 ">
+            <form method="POST">
+                <div class="form-group col align-self-center">
+                    {{ form.name.label("후보자 이름") }}
+                    {{ form.name(class="form-control", placeholder="후보자 이름") }}
+                </div>
+                <div class="form-group col align-self-center">
+                    {{ form.symbolnum.label("기호 번호") }}
+                    {{ form.symbolnum(class="form-control", placeholder="기호 번호") }}
+                </div>
+                <div class="form-group col align-self-center">
+                    {{ form.img_file.label("메인 이미지") }}
+                    {{ form.img_file(class="form-control") }}
+                </div>                    
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary">등록</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

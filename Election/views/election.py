@@ -261,7 +261,7 @@ def view_voters(election_id):
 @permission_admin.require(http_exception=403)
 @election_page.route('/mancandidate/<int:election_id>', methods=['GET', 'POST'])
 def man_candidate(election_id):
-    candidates = Candidate.query.filter(Candidate.election_id==election_id).order_by(Candidate.symbolnum.asc())
+    candidates = Candidate.query.filter(Candidate.election_id==election_id).order_by(Candidate.candidate_id.asc())
     
     return render_template('views/election/mancandidate.html', candidates=candidates, election_id=election_id)
 
@@ -271,7 +271,7 @@ def add_candidate(election_id):
     form = AddCandidateForm()
     if form.validate(request.form):
         print('감지')
-        candidate = Candidate(form['name'].data, form['symbolnum'].data, form.img_file.data, election_id)
+        candidate = Candidate(form['name'].data, form['candidate_id'].data, form.img_file.data, election_id)
         db.session.add(candidate)
         db.session.commit()
         return redirect(url_for('election_page.man_candidate', election_id=election_id))
