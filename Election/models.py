@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.util.langhelpers import symbol
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -177,17 +178,19 @@ class Candidate(db.Model):
         {'extend_existing': True,
             'mysql_charset': 'utf8mb4',
             'mysql_engine': 'InnoDB'})
- 
-    election_id = db.Column(db.Integer, nullable=False, primary_key=True)
-    account_id = db.Column(db.Integer, nullable=False)
-    state = db.Column(db.Integer, nullable=False, server_default='0', doc='0:대기,1:취소,2:거절,3:승인')
+
+    name = db.Column(db.String(64), nullable=False)
+    election_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=False)
+    candidate_id = db.Column(db.Integer, nullable= False, primary_key=True, autoincrement=False)
+    candidate_img = db.Column(db.String(256), nullable=True)
     create_date = db.Column(db.DateTime, nullable=True)
     update_date = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self, election_id, account_id):
+    def __init__(self, name, symbolnum, candidate_img, election_id):
+        self.name = name
+        self.symbolnum = symbolnum
         self.election_id = election_id
-        self.account_id = account_id
-        self.state = CandidateStatus.WAITING
+        self.candidate_img = candidate_img
         self.create_date = datetime.now()
         self.update_date = datetime.now()
 

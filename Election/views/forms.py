@@ -32,3 +32,13 @@ class ModifyElectionForm(Form):
 class AddElectionVoterForm(Form):
     election = SelectField('election', choices=list(), validators=[validators.InputRequired('')])
     csv_file = FileField('csv_file')
+
+class AddCandidateForm(Form):
+    name = StringField('name', validators=[validators.InputRequired()])
+    symbolnum = StringField('symbolnum', validators=[validators.InputRequired()])
+    img_file = FileField('img_file')
+
+class ModCandidateForm(Form):
+    name = StringField('name', validators=[validators.InputRequired()])
+    symbolnum = StringField('symbolnum', validators=[validators.InputRequired()])
+    img_file = FileField('img_file')

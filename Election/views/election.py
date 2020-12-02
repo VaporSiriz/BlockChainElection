@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, make_response, redirect, request
 from flask.helpers import url_for
 from models import *
-from .forms import AddElectionForm, ManageElectionForm, ModifyElectionForm, AddElectionVoterForm
+from .forms import AddCandidateForm, AddElectionForm, ManageElectionForm, ModifyElectionForm, AddElectionVoterForm
 from datetime import datetime, timedelta
 from login_manager import *
 from flask_login import login_user, login_required, current_user
@@ -102,8 +102,6 @@ def detail():
 def addElection():
     form = AddElectionForm(request.form)
     now = datetime.now()
-    print("form['startat'].data : ", form['startat'].data)
-    print("form['endat'].data : ", form['endat'].data)
     if form.validate():
         if form['startat'].data <= now:
             return u'start date is less than now.', 400
@@ -260,3 +258,21 @@ def view_voters(election_id):
     
     return render_template('views/election/voters.html', voters=voters)
 
+@permission_admin.require(http_exception=403)
+@election_page.route('/mancandidate/<int:election_id>', methods=['GET', 'POST'])
+def man_candidate(election_id):
+    candidates = Candidate.query.filter(Candidate.election_id==election_id).order_by(Candidate.symbolnum.asc())
+    
+    return render_template('views/election/mancandidate.html', candidates=candidates, election_id=election_id)
+
+@permission_admin.require(http_exception=403)
+@election_page.route('/addcandidate/<int:election_id>', methods=['GET', 'POST'])
+def add_candidate(election_id):
+    form = AddCandidateForm()
+    if form.validate(request.form):
+        print('감지')
+        candidate = Candidate(form['name'].data, form['symbolnum'].data, form.img_file.data, election_id)
+        db.session.add(candidate)
+        db.session.commit()
+        return redirect(url_for('election_page.man_candidate', election_id=election_id))
+    return render_template('views/election/addcandidate.html', form=form)
