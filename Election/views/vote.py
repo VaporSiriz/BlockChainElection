@@ -3,6 +3,7 @@ from models import *
 from flask_login import login_required, current_user
 from login_manager import permission_admin, permission_user
 from blockchain_manager import BlockChainManager
+from enums import VoteStatus
 
 vote_page = Blueprint('vote_page', __name__, template_folder='templates', static_folder='static')
 
@@ -48,24 +49,40 @@ def my_vote():
     return render_template('views/vote/my_vote.html')
 
 
-@vote_page.route('/vote')
+@vote_page.route('/vote', methods=['POST'])
 @permission_user.require(http_exception=403)
+@login_required
 def vote():
     acc = Account.query.filter_by(id=current_user.id).first()#type: Account
     if acc is None:
         return u"account doesn't exist", 400
-
     election_id = int(request.form['election_id'])
     candidate_id = int(request.form['candidate_id'])
-    
+    vote = Vote.query.filter_by(election_id=election_id, account_id=current_user.id).first()
+    if vote is None:
+        vote = Vote(election_id, current_user.id, candidate_id)
+    if vote.state == True:
+        return u"이미 투표에 참여하셨습니다.", 400
+
     if Election.query.filter_by(id=election_id).scalar() is None:
         return u"election doesn't exist", 400
     
-    if Candidate.query.filter_by(election_id=election_id, candidate_id=candidate_id).scalar() is None:
-        return u"candidate doesn't exist", 400
-    
-    status = BlockChainManager.instance().voting_to_blockchain_server(election_id, acc, candidate_id)
-    print(status)
+    # if Candidate.query.filter_by(election_id=election_id, id=candidate_id).scalar() is None:
+    #     return u"candidate doesn't exist", 400
+    if not Voters.cert_voter(election_id, current_user.id):
+        print('no')
+        return u"투표 자격이 없습니다.", 400
+
+    try :
+        status = BlockChainManager.instance().voting_to_blockchain_server(election_id, acc, candidate_id)
+        print(status)
+        if status:
+            vote.state = True
+    except Exception as ex:
+        return u"체인에 문제가 발생하였습니다. 다시 투표해주세요.", 400
+    db_add(vote)
+    db_flush()
+
     return render_template('views/vote/index.html')
 
 @vote_page.route('/vote/result')

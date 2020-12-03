@@ -39,7 +39,7 @@ def login():
     # handle this for us, and we use a custom LoginForm to validate.
 
     form = UserLoginForm(request.form)
-    username = form['username'].data
+    username = form['username'].data.encode('utf-8')
     password = form['password'].data
     print("username : ", username, "password : ", password)
     if form.validate():

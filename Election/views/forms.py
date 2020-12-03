@@ -32,3 +32,39 @@ class ModifyElectionForm(Form):
 class AddElectionVoterForm(Form):
     election = SelectField('election', choices=list(), validators=[validators.InputRequired('')])
     csv_file = FileField('csv_file')
+
+class AddCandidateForm(Form):
+    name = StringField('name', validators=[validators.InputRequired()])
+    candidate_id = StringField('candidate_id', validators=[validators.InputRequired()])
+    candidate_img = FileField('candidate_img')
+    pledge = FileField('pledge')
+    career = FileField('career')
+    profile_sub1 = FileField('candidate_img')
+    profile_sub2 = FileField('candidate_img')
+    profile_sub3 = FileField('candidate_img')
+    extra_img = FileField('extra_img')
+    extra = StringField('extra', validators=[validators.InputRequired()])
+
+class ModifyCandidateForm(Form):
+    name = StringField('name', validators=[validators.InputRequired()])
+    candidate_id = StringField('candidate_id', validators=[validators.InputRequired()])
+    candidate_img = FileField('candidate_img')
+    pledge = FileField('pledge')
+    career = FileField('career')
+    profile_sub1 = FileField('candidate_img')
+    profile_sub2 = FileField('candidate_img')
+    profile_sub3 = FileField('candidate_img')
+    extra_img = FileField('extra_img')
+    extra = StringField('extra', validators=[validators.InputRequired()])
+
+    def fill(self, candidate):
+        self.name.data = candidate.name
+        self.candidate_id.data = candidate.candidate_id
+        self.candidate_img.data = candidate.candidate_img
+        self.pledge.data = candidate.pledge
+        self.career.data = candidate.career
+        self.profile_sub1.data = candidate.profile_sub1
+        self.profile_sub2.data = candidate.profile_sub2
+        self.profile_sub3.data = candidate.profile_sub3
+        self.extra_img.data = candidate.extra_img
+        self.extra.data = candidate.extra
