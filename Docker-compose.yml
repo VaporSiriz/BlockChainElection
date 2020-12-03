@@ -79,8 +79,8 @@ services:
     networks:
       - custom
     external_links:
-      - blockchain1:blockchain2
-      - blockchain2:blockchain3
+      - blockchain2:blockchain2
+      - blockchain3:blockchain3
     sysctls:
       - net.core.somaxconn=4096
     tty: true

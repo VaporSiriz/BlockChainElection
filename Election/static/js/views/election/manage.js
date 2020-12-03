@@ -120,7 +120,7 @@ $(function() {
             })
             .done(function(data) {
                 alert('선거가 삭제 되었습니다.');
-                location.reload();
+                location.href=flask_util.url_for('election_page.manageElection')
             })
             .fail(function(data){
                 if(data.status == 403)

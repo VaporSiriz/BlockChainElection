@@ -8,9 +8,6 @@
 	<link rel="stylesheet" type="text/css" href="css/reset.css?">
 	<link rel="stylesheet" type="text/css" href="css/style.css?a"> -->
 
-	<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon/favicon.ico') }}">
-	<link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/favicon/flat-design-touch.png') }}">
-
     <!-- <script src="./dist/jquery.min.js"></script>
         
 	<script src="./dist/bootstrap.min.js"></script> -->
@@ -33,59 +30,34 @@
 {% block content %}
 <div id="wrap">
     <section class="content-header_h">
-        <h2>문재인 후보자</h2>
+        <h2>기호 {{ candidate.candidate_id }} 번 {{ candidate.name }} 후보자</h2>
     </section>
     <section class="detail-content_h">
-        <table class="table detail-table">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">소속</th>
-                    <th scope="col">이름</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>더불어민주당</td>
-                    <td>문재인</td>
-                </tr>
-            </tbody>
-        </table>
         <div class="detail-contents-con_h">
             <div class="profile-contents-con_h">
                 <div class="profile-con">
-                    <div><img src="{{ url_for('static', filename='hj/images/mun2.jpg') }}"></div>
+                    <div><img src="{{ url_for('static', filename='hj/images/'+candidate.profile_sub1) }}"></div>
                 </div>
                 <div class="profile-con">
-                    <div><img src="{{ url_for('static', filename='hj/images/mun1.jpg') }}"></div>
-                    <div class="profile-col"><img src="{{ url_for('static', filename='hj/images/mun3.jpg') }}"><div class="more">더보기</div></div>
+                    <div><img src="{{ url_for('static', filename='hj/images/'+candidate.profile_sub2) }}"></div>
+                    <div class="profile-col"><img src="{{ url_for('static', filename='hj/images/'+candidate.profile_sub3) }}"><div class="more">더보기</div></div>
                 </div>
             </div>
             <div class="carrer-con_h">
                 <div class="carrer-img-con_h">
-                    <img src="{{ url_for('static', filename='hj/images/biography.jpg') }}" alt="바이오그래피">
+                    <img src="{{ url_for('static', filename='hj/images/'+candidate.profile_sub1) }}" alt="바이오그래피">
                 </div>
                 <div class="carrer-des-con_h">
                     <ul class="carrer">
-                        <li class="highlight">2017.05 제 19대 대한민국 대통령</li>
-                        <li>2015.12~2016.01 더불어민주당 당대표</li>
-                        <li>2015.02~2015.12 새정치민주연합 당대표</li>
-                        <li>2012.05~2016.05 제 19대 국회의원</li>
-                        <li>2011.12 민주통합당 상임고문</li>
-                        <li>2011 혁신과 통합 상임대표</li>
-                        <li>2010.08~2012.04 사람사는세상 노무현재단 이사장</li>
-                        <li>2009.09~2009.08 사람사는세상 노무현재단 상임이사</li>
-                        <li>2007.08 제 2차 남북정상회담 추진위원회 위원장</li>
-                        <li>2007.03~2008.02 대통령 비서실 실장</li>
-                        <li>2005.01~2006.05 대통령비서실 민정수석비서관</li>
-                        <li>2004.05~2005.01 대통령비서실 시민사회수석비서관</li>
-                        <li class="hide">2011.12 민주통합당 상임고문</li>
-                        <li class="hide">2011 혁신과 통합 상임대표</li>
-                        <li class="hide">2010.08~2012.04 사람사는세상 노무현재단 이사장</li>
-                        <li class="hide">2009.09~2009.08 사람사는세상 노무현재단 상임이사</li>
-                        <li class="hide">2007.08 제 2차 남북정상회담 추진위원회 위원장</li>
-                        <li class="hide">2007.03~2008.02 대통령 비서실 실장</li>
-                        <li class="hide">2005.01~2006.05 대통령비서실 민정수석비서관</li>
-                        <li class="hide">2004.05~2005.01 대통령비서실 시민사회수석비서관</li>
+                        {% for li in candidate.extra.replace(' ', '').replace('\n', '').split(',')[0:-1] %}
+                        {% if li[0:2] == 'H-' %}
+                        <li class="highlight">{{ li[2:] }}</li>
+                        {% elif li[0:2] == 'h-' %}
+                        <li class="hide">{{ li[2:] }}</li>
+                        {% else %}
+                        <li>{{ li }}</li>
+                        {% endif %}                 
+                        {% endfor %}
                     </ul>
                     <button type="button" class="btn btn-dark delete-hide">더보기</button>
                 </div>

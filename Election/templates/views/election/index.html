@@ -50,15 +50,21 @@
                         <div class="container-vote_h">
                             {% for active_election in active_elections1 %}
                             <div class="card">
-                                <img  src="{{ url_for('static', filename='hj/images/p2.jpg') }}" class="card-img-top" alt="...">
+                                <img  src="{{ url_for('static', filename='hj/images/'+active_election.main_img) }}" class="card-img-top" alt="...">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ active_election.title }}</h5>
+                                    <h5 class="card-title">{{ active_election.title }}<br>
+                                        {% if current_user.is_authenticated %}
+                                        {% if active_votes[active_election.id]['cert_voter'] == True %}
+                                        <code><small>(참여가능)</small></code>
+                                        {% endif %}
+                                        {% endif %}
+                                    </h5>
                                         현재 투표 수 : {{ active_votes[active_election.id]['num_of_vote'] }}<br>
                                         목표 투표 수 : {{ active_votes[active_election.id]['whole_of_vote'] }}<br>
                                         <small>{{ active_election.startat }} ~ {{ active_election.endat }}</small>
                                     <div class="btn-con_h">
-                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{active_election.id}}">상세보기</button>
-                                        <button type="button" class="btn btn-warning" data-toggle="popover" data-placement="bottom" data-content="로그인이 필요합니다.">투표하기</button>
+                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{active_election.id}}" data-func='0'>상세보기</button>
+                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{active_election.id}}" data-func='1'>투표하기</button>
                                         <button type="button" class="btn btn-share" data-toggle="popover" title="공유" data-placement="top" data-content="https://www.naver.com/ 복사">
                                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-share-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
@@ -70,19 +76,26 @@
                             {% endfor %}
                         </div>
                     </div>
+                    {% if active_elections2 %}
                     <div class="item">
                         <div class="container-vote_h">
                             {% for active_election in active_elections2 %}
                             <div class="card">
-                                <img src="{{ url_for('static', filename='hj/images/1.png') }}" class="card-img-top" alt="...">
+                                <img src="{{ url_for('static', filename='hj/images/'+active_election.main_img) }}" class="card-img-top" alt="...">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ active_election.title }}</h5>
+                                    <h5 class="card-title">{{ active_election.title }}
+                                        {% if current_user.is_authenticated %}
+                                        {% if active_votes[active_election.id]['cert_voter'] == True %}
+                                        <code><small>(참여가능)</small></code>
+                                        {% endif %}
+                                        {% endif %}
+                                    </h5>
                                         현재 투표 수 : {{ active_votes[active_election.id]['num_of_vote'] }}<br>
                                         목표 투표 수 : {{ active_votes[active_election.id]['whole_of_vote'] }}<br>
                                         <small>{{ active_election.startat }} ~ {{ active_election.endat }}</small>
                                     <div class="btn-con_h">
-                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{active_election.id}}">상세보기</button>
-                                        <button type="button" class="btn btn-warning" data-toggle="popover" data-placement="bottom" data-content="로그인이 필요합니다.">투표하기</button>
+                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{active_election.id}}" data-func='0'>상세보기</button>
+                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{active_election.id}}" data-func='1'>투표하기</button>
                                         <button type="button" class="btn btn-share" data-toggle="popover" title="공유" data-placement="top" data-content="https://www.naver.com/ 복사">
                                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-share-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
@@ -94,6 +107,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                    {% endif %}
                 </div>
                 <div class="controls-bottom">
                     <a href="#multi-item-example" data-slide="prev"><i class="fas fa-angle-left fa-3x pr-3"></i></a>
@@ -110,7 +124,7 @@
                         <div class="container-vote_h">
                             {% for dead_election in dead_elections1 %}
                             <div class="card">
-                                <img src="{{ url_for('static', filename='hj/images/p5.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ url_for('static', filename='hj/images/'+dead_election.main_img) }}" class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ dead_election.title }}</h5>
                                         현재 투표 수 : {{ dead_votes[dead_election.id]['num_of_vote'] }}<br>
@@ -118,7 +132,7 @@
                                         <small>{{ dead_election.startat }} ~ {{ dead_election.endat }}</small>
                                     <div class="btn-con_h">
                                         <button type="button" class="card-btn btn btn-warning" data-election-id="{{dead_election.id}}">상세보기</button>
-                                        <button type="button" class="btn btn-warning" data-toggle="popover" data-placement="bottom" data-content="로그인이 필요합니다.">투표하기</button>
+                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{dead_election.id}}" data-func='2'>결과보기</button>
                                         <button type="button" class="btn btn-share" data-toggle="popover" title="공유" data-placement="top" data-content="https://www.naver.com/ 복사">
                                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-share-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
@@ -135,16 +149,15 @@
                         <div class="container-vote_h">
                             {% for dead_election in dead_elections2 %}
                             <div class="card">
-                                <img src="{{ url_for('static', filename='hj/images/p5.jpg') }}" class="card-img-top" alt="...">
+                                <img src="{{ url_for('static', filename='hj/images/'+dead_election.main_img) }}" class="card-img-top" alt="...">
                                 <div class="card-body">
-                                    <h5 class="card-title">푸르지오 아파트 관리자 대표 선거</h5>
                                     <h5 class="card-title">{{ dead_election.title }}</h5>
                                         현재 투표 수 : {{ dead_votes[dead_election.id]['num_of_vote'] }}<br>
                                         목표 투표 수 : {{ dead_votes[dead_election.id]['whole_of_vote'] }}<br>
                                         <small>{{ dead_election.startat }} ~ {{ dead_election.endat }}</small>
                                     <div class="btn-con_h">
-                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{dead_election.id}}"">상세보기</button>
-                                        <button type="button" class="btn btn-warning" data-toggle="popover" data-placement="bottom" data-content="로그인이 필요합니다.">투표하기</button>
+                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{dead_election.id}}">상세보기</button>
+                                        <button type="button" class="card-btn btn btn-warning" data-election-id="{{dead_election.id}}" data-func='2'>결과보기</button>
                                         <button type="button" class="btn btn-share" data-toggle="popover" title="공유" data-placement="top" data-content="https://www.naver.com/ 복사">
                                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-share-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
