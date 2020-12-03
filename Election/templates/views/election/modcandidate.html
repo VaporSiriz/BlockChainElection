@@ -1,0 +1,61 @@
+{% extends "default.html" %}
+{% block title %}선거생성{% endblock %}
+{% block head %}
+{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5">
+        <h1>후보자 추가</h1>
+    </div>
+    <div class="row mt-5">
+        <div class="col-10 ">
+            <form method="POST">
+                <div class="form-group col align-self-center">
+                    {{ form.name.label("후보자 이름") }}
+                    {{ form.name(class="form-control", value=candidate.name) }}
+                </div>
+                <div class="form-group col align-self-center">
+                    {{ form.candidate_id.label("기호 번호") }}
+                    {{ form.candidate_id(class="form-control", value=candidate.candidate_id) }}
+                </div>
+                <div class="form-group col align-self-center">
+                    {{ form.candidate_img.label("메인 이미지") }}
+                    {{ form.candidate_img(class="form-control", value=candidate.candidate_img) }}
+                </div>
+                <div class="form-group col align-self-center">
+                    {{ form.pledge.label("공약") }}
+                    {{ form.pledge(class="form-control", value=candidate.pledge) }}
+                </div>
+                <div class="form-group col align-self-center">
+                    {{ form.career.label("경력") }}
+                    {{ form.career(class="form-control", value=candidate.career) }}
+                </div>
+                <div class="form-group col align-self-center">
+                    {{ form.profile_sub1.label("서브 이미지1") }}
+                    {{ form.profile_sub1(class="form-control", value=candidate.profile_sub1) }}
+                </div>
+                <div class="form-group col align-self-center">
+                    {{ form.profile_sub2.label("서브 이미지2") }}
+                    {{ form.profile_sub2(class="form-control", value=candidate.profile_sub2) }}
+                </div>
+                <div class="form-group col align-self-center">
+                    {{ form.profile_sub3.label("서브 이미지3") }}
+                    {{ form.profile_sub3(class="form-control", value=candidate.profile_sub3) }}
+                </div> 
+                <div class="form-group col align-self-center">
+                    {{ form.profile_sub3.label("extra_img") }}
+                    {{ form.extra_img(class="form-control", value=candidate.extra_img) }}
+                </div> 
+                <div class="form-group col align-self-center">
+                    {{ form.extra.label("그 외") }}
+                    {{ form.extra(class="form-control", value=candidate.extra) }}
+                </div> 
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary">등록</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -11,6 +11,7 @@
             <tr class="bg-dark" style="color: white">
                 <th scope="col">ID</th>
                 <th scope="col">이름</th>
+                <th scope="col">BlockChain Address</th>
             </tr>
         </thead>
         <tbody>
@@ -18,6 +19,7 @@
             <tr>
                 <td>{{ acc.id }}</td>
                 <td>{{ acc.username }}</td>
+                <td>{{ acc._blockchain_address }}</td>
             </tr>
             {% endfor %}
         </tbody>

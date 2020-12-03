@@ -36,8 +36,6 @@ class BlockChain(SingletonInstane):
 
     def init_blockchain(self, app, neighbours=[]):
         self.app = app
-        self.transaction_pool = []
-        self.chain = []
         self.neighbours = neighbours
         self.create_block(0, self.hash({}), True)
 
@@ -55,16 +53,16 @@ class BlockChain(SingletonInstane):
         })
         self.chain.append(block)
         self.transaction_pool = []
-        #if not is_first:
-        for node in self.neighbours:
-            try:
-                url = self.app.config['BLOCKCHAINURLFORMAT'].format(node, 'transactions')
-                rsp = requests.delete(url, timeout=3)
-                print('delete rsp : ', rsp)
-                sleep(1)
-            except Exception as ex:
-                print('ex1 : ', ex)
-                continue
+        if not is_first:
+            for node in self.neighbours:
+                try:
+                    url = self.app.config['BLOCKCHAINURLFORMAT'].format(node, 'transactions')
+                    rsp = requests.delete(url, timeout=3)
+                    print('delete rsp : ', rsp)
+                    sleep(1)
+                except Exception as ex:
+                    print('ex1 : ', ex)
+                    continue
 
         return block
 
@@ -167,13 +165,26 @@ class BlockChain(SingletonInstane):
 
     def get_vote(self, election_id, account_address):
         candidate_id = 0
+        print('check vote election id : ', election_id, ' account_address : ', account_address)
         for block in self.chain:
             for transaction in block['transactions']:
+                print('transaction election id : ', transaction['election_id'], ' account_address : ', transaction['account_address'])
                 if account_address == transaction['account_address'] and \
                    election_id == transaction['election_id']:
                     candidate_id = transaction['candidate_id']
                     break
         return candidate_id
+
+    def get_vote_block(self, election_id, account_address):
+        trans = None
+        for block in self.chain:
+            for transaction in block['transactions']:
+                print('transaction election id : ', transaction['election_id'], ' account_address : ', transaction['account_address'])
+                if account_address == transaction['account_address'] and \
+                   election_id == transaction['election_id']:
+                    trans = block['transactions']
+                    break
+        return trans
 
     def calculate_result(self, election_id):
         votes = {}
@@ -234,5 +245,6 @@ class BlockChain(SingletonInstane):
         return False
 
     def is_there_vote(self, election_id, user_address):
-        return self.get_vote(election_id, user_address) != 0
+        result = self.get_vote(election_id, user_address) != 0
+        return result
             

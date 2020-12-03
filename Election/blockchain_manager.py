@@ -44,32 +44,46 @@ class BlockChainManager(SingletonInstane):
             모두 실행.
         """
         rand_num = self.get_blockchain_server_with_rand()
+        # for i in range(1, self.blockchain_number+1):
+        #     url = self.url_format.format(self.blockchain_url, rand_num, 'transactions')
+        #     rsp = requests.delete(url)
+        #     sleep(1)
         url = self.url_format.format(self.blockchain_url, rand_num, 'transactions')
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        rsp = requests.post(url, data, headers=headers)
+        rsp = requests.post(url, data, headers=headers, timeout=3)
         if rsp.status_code == 201:
             sleep(1)
             url = self.url_format.format(self.blockchain_url, rand_num, 'mine')
             rsp = requests.get(url)
             if rsp.status_code == 200:
-                for i in range(1, self.blockchain_number+1):
-                    url = self.url_format.format(self.blockchain_url, i, 'resolve_conflicts')
-                    rsp = requests.get(url)
-                    if rsp.status_code != 200:
-                        return False
-                    sleep(1)
-                    url = self.url_format.format(self.blockchain_url, rand_num, 'transactions')
-                    rsp = requests.delete(url)
                 return True
         return False
 
     def get_my_vote(self, election_id, account_address):
         params = {'election_id': election_id, 'account_address': account_address}
-        for i in range(1, self.blockchain_number+1):
+        json = None
+        for i in range(1, self.blockchain_number):
             url = self.url_format.format(self.blockchain_url, i, 'get_vote')
-            rsp = requests.get(url)
-            json.append(rsp.json)
-            print(rsp.json)
+            rsp = requests.get(url, params={'election_id':election_id, 'account_address': account_address})
+            if json is None:
+                json = rsp.json()
+            if json != rsp.json():
+                return None
+            print(rsp.json())
+        return json
+
+    def get_my_vote_block(self, election_id, account_address):
+        params = {'election_id': election_id, 'account_address': account_address}
+        json = None
+        for i in range(1, self.blockchain_number):
+            url = self.url_format.format(self.blockchain_url, i, 'get_vote_block')
+            rsp = requests.get(url, params={'election_id':election_id, 'account_address': account_address})
+            print(rsp.json())
+            if json is None:
+                json = rsp.json()
+            if json != rsp.json():
+                return None
+            print(rsp.json())
         return json
 
     def get_vote_result(self, election_id):
@@ -78,8 +92,8 @@ class BlockChainManager(SingletonInstane):
         for i in range(1, self.blockchain_number+1):
             url = self.url_format.format(self.blockchain_url, i, 'result')
             rsp = requests.get(url)
-            json.append(rsp.json)
-            print(rsp.json)
+            json.append(rsp.json())
+            print(rsp.json())
         return json
 
             

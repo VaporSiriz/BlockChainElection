@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.util.langhelpers import symbol
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -170,24 +171,49 @@ class Voters(db.Model):
     @staticmethod
     def get_number_of_voters(election_id):
         return Voters.query.filter_by(election_id=election_id).count()
-
+    
+    @staticmethod
+    def cert_voter(election_id, account_id):
+        voter = Voters.query.filter_by(election_id=election_id, account_id=account_id).scalar()
+        return voter is not None
+        
+        
 class Candidate(db.Model):
     __table_name__ = 'candidate'
     __table_args__ = (
         {'extend_existing': True,
             'mysql_charset': 'utf8mb4',
             'mysql_engine': 'InnoDB'})
- 
-    election_id = db.Column(db.Integer, nullable=False, primary_key=True)
-    account_id = db.Column(db.Integer, nullable=False)
-    state = db.Column(db.Integer, nullable=False, server_default='0', doc='0:대기,1:취소,2:거절,3:승인')
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    election_id = db.Column(db.Integer, nullable=False)
+    candidate_id = db.Column(db.Integer, nullable= False)
+    candidate_img = db.Column(db.String(256), nullable=True)
+    pledge = db.Column(db.String(256), nullable=True)
+    career = db.Column(db.String(256), nullable=True)
+    profile_sub1 = db.Column(db.String(256), nullable=True)
+    profile_sub2 = db.Column(db.String(256), nullable=True)
+    profile_sub3 = db.Column(db.String(256), nullable=True)
+    extra_img = db.Column(db.String(256), nullable=True)
+    extra = db.Column(db.String(4096), nullable=True)
     create_date = db.Column(db.DateTime, nullable=True)
     update_date = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self, election_id, account_id):
+    def __init__(self, name, candidate_id, candidate_img, election_id, \
+                 pledge, career, profile_sub1, profile_sub2, profile_sub3, \
+                 extra_img, extra):
+        self.name = name
+        self.candidate_id = candidate_id
         self.election_id = election_id
-        self.account_id = account_id
-        self.state = CandidateStatus.WAITING
+        self.candidate_img = candidate_img
+        self.pledge = pledge
+        self.career = career
+        self.profile_sub1 = profile_sub1
+        self.profile_sub2 = profile_sub2
+        self.profile_sub3 = profile_sub3
+        self.extra_img = extra_img
+        self.extra = extra
         self.create_date = datetime.now()
         self.update_date = datetime.now()
 
@@ -216,21 +242,21 @@ class Vote(db.Model):
         self.election_id = election_id
         self.account_id = account_id
         self.candidate_id = candidate_id
-        self.state = VoteStatus.PENDING
+        self.state = False
         self.create_date = datetime.now()
         self.update_date = datetime.now()
 
     def approve_vote(self):
-        self.state = VoteStatus.APPROVE
+        self.state = True
 
     def is_approved(self):
-        return self.state == VoteStatus.APPROVE
+        return self.state == True
     
     def is_destoryed(self):
         return self.destroy_date is not None
 
 class AdminMessageBox(db.Model):
-    __table_name__ = 'vote'
+    __table_name__ = 'admin_message_box'
     __table_args__ = (
         {'extend_existing': True,
             'mysql_charset': 'utf8mb4',

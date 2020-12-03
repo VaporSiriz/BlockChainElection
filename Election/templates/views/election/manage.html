@@ -8,7 +8,8 @@
     <h1 style="text-align: left;">등록된 선거</h1>
     <div style="text-align:right">
         <button type="submit" class="btn btn-dark btn-sm" id="add_voter_btn" name="add_voter">투표자 추가</button>
-        <button type="submit" class="btn btn-dark btn-sm" id="add_election_btn" name="add_election" value="" onclick=location.href="{{ url_for('election_page.addElection') }}">선거 추가</button>
+        <button type="submit" class="btn btn-dark btn-sm" id="add_election_btn" name="add_election" value=""
+            onclick=location.href="{{ url_for('election_page.addElection') }}">선거 추가</button>
     </div>
     <table class="table table-bordered table-sm mt-3">
         <thead>
@@ -33,16 +34,21 @@
                 <td>{{ data.id }}</td>
                 <td>{{ data.title }}</td>
                 <td>{{ data.desc }}</td>
-                <td>{{ data.startat }}</td>
-                <td>{{ data.endat }}</td>
+                <td>{{ data.startat.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>{{ data.endat.strftime("%Y-%m-%d %H:%M") }}</td>
                 <td>
                     {% if data.in_works() == False %}
                     <a href="/election/modify/{{data.id}}" class="btn btn-dark btn-sm">수정</a>
-                    <button type="button" class="btn btn-dark btn-sm startbtn" id="startbtn" name="startbtn" data-election-id="{{ data.id }}">시작</button>
+                    <button type="button" class="btn btn-dark btn-sm startbtn" id="startbtn" name="startbtn"
+                        data-election-id="{{ data.id }}">시작</button>
+                    {% else %}
+                    <button type="button" class="btn btn-dark btn-sm endbtn" id="endbtn" name="endbtn"
+                        data-election-id="{{ data.id }}">종료</button>
                     {% endif %}
-                    <button type="button" class="btn btn-dark btn-sm endbtn" id="endbtn" name="endbtn" data-election-id="{{ data.id }}">종료</button>
-                    <button type="button" class="btn btn-dark btn-sm" id="lookupvotersbtn" name="lookupvotersbtn" 
-                            onclick=location.href="{{ url_for('election_page.view_voters', election_id=data.id) }}">투표자 조회</button>
+                    <button type="button" class="btn btn-dark btn-sm" id="lookupvotersbtn" name="lookupvotersbtn"
+                        onclick=location.href="{{ url_for('election_page.view_voters', election_id=data.id) }}">투표자
+                        조회</button>
+                    <button type="button" class="btn btn-dark btn-sm" onclick=location.href="{{ url_for('election_page.man_candidate', election_id=data.id) }}">후보자 관리</button>
 
                 </td>
             </tr>
@@ -111,12 +117,14 @@
                 <td>{{ data.id }}</td>
                 <td>{{ data.title }}</td>
                 <td>{{ data.desc }}</td>
-                <td>{{ data.startat }}</td>
-                <td>{{ data.endat }}</td>
+                <td>{{ data.startat.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td>{{ data.endat.strftime("%Y-%m-%d %H:%M") }}</td>
                 <td>
-                    <button type="button" class="btn btn-dark btn-sm destroybtn" id="destroybtn" name="destroybtn" data-election-id="{{ data.id }}">삭제</button>
-                    <button type="button" class="btn btn-dark btn-sm" id="lookupvotersbtn" name="lookupvotersbtn" 
-                            onclick=location.href="{{ url_for('election_page.view_voters', election_id=data.id) }}">투표자 조회</button>
+                    <button type="button" class="btn btn-dark btn-sm destroybtn" id="destroybtn" name="destroybtn"
+                        data-election-id="{{ data.id }}">삭제</button>
+                    <button type="button" class="btn btn-dark btn-sm" id="lookupvotersbtn" name="lookupvotersbtn"
+                        onclick=location.href="{{ url_for('election_page.view_voters', election_id=data.id) }}">투표자
+                        조회</button>
                 </td>
             </tr>
             {% endfor %}
@@ -169,12 +177,13 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title">투표자 추가</h5><small><code>대기 상태인 선거만 가능합니다.</code></small>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                <h5 class="modal-title">투표자 추가</h5><small><code>대기 상태인 선거만 가능합니다.</code></small>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <form id="frmAddVoter" class="form-inline" method="POST" action="{{ url_for('election_page.add_voters') }}" enctype="multipart/form-data">
+            <form id="frmAddVoter" class="form-inline" method="POST" action="{{ url_for('election_page.add_voters') }}"
+                enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="col-md-6">
                         <span>선거 :</span>
@@ -185,7 +194,7 @@
                         <span>csv file :</span>
                         {{ add_election_voter_form.csv_file(class="form-control") }}
                     </div>
-                    <br>         
+                    <br>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                         <input type="submit" class="btn btn-primary" value="완료">
@@ -198,5 +207,5 @@
 {% endblock %}
 
 {% block script %}
-	<script src="{{ url_for('static', filename='js/views/election/manage.js') }}"></script>
+<script src="{{ url_for('static', filename='js/views/election/manage.js') }}"></script>
 {% endblock %}

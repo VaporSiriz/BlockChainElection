@@ -62,9 +62,10 @@ def writeMsg():
     data=[]
     election_titles = {}
     for i in isadmin:
-        data.append(i.election_id)
-        ele = Election.query.filter_by(id=i.election_id).first()
-        election_titles[i.election_id] = ele.title
+        ele = Election.query.filter_by(id=i.election_id, destroy_date=None).first()
+        if ele is not None:
+            election_titles[i.election_id] = ele.title
+            data.append(i.election_id)
     return render_template('views/message/writeMsg.html', data=data, 
                             election_titles=election_titles)
 

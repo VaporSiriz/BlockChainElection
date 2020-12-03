@@ -12,17 +12,17 @@
     <table class="table table-bordered table-sm mt-3">
         <sthead>
             <tr class="bg-dark" style="color: white">
-                <th scope="col">상태</th>
                 <th scope="col">ID</th>
                 <th scope="col">이름</th>
+                <th scope="col">표 블록 확인</th>
             </tr>
         </thead>
         <tbody>
             {% for voter in voters.items %}
             <tr>
-                <td>{% if voter.is_candidate == True %}후보자{% else %}투표자{% endif %}</td>
                 <td>{{ voter.account_id }}</td>
                 <td>{{ voter.username }}</td>
+                <td>{{ vote_blocks[voter.account_id] }}</td>
             </tr>
             {% endfor %}
         </tbody>
